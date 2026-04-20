@@ -19,7 +19,7 @@ const Navbar = () => {
     <nav className="bg-white/80 backdrop-blur-md shadow-sm border-b sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
-          <Link to="/" className="text-xl font-black text-primary flex items-center gap-2 tracking-tight">
+          <Link to={user ? "/listings" : "/"} className="text-xl font-black text-primary flex items-center gap-2 tracking-tight">
             <Home size={26} className="text-primary" />
             <span className="hidden sm:inline">STUDENT HOUSING <span className="text-gray-400 font-light">RW</span></span>
           </Link>

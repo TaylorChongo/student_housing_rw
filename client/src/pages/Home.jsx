@@ -1,18 +1,26 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Home as HomeIcon, Search, ShieldCheck, PlusCircle, MapPin, User } from 'lucide-react';
 import api from '../services/api';
+import { getCurrentUser } from '../services/authService';
 
 const Home = () => {
   const [latestListings, setLatestListings] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
+    const user = getCurrentUser();
+    if (user) {
+      navigate('/listings');
+      return;
+    }
+
     api.get('/listings?limit=3').then(res => {
       setLatestListings(res.data.listings);
       setLoading(false);
     }).catch(() => setLoading(false));
-  }, []);
+  }, [navigate]);
 
   const scrollToLatest = (e) => {
     e.preventDefault();

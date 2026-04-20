@@ -1,0 +1,90 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id               Int        @id @default(autoincrement())
+  name             String
+  email            String     @unique
+  password         String
+  role             String     @default("student")
+  createdAt        DateTime   @default(now())
+  landlordBookings Booking[]  @relation("LandlordBookings")
+  studentBookings  Booking[]  @relation("StudentBookings")
+  favorites        Favorite[]
+  studentInquiries Inquiry[]  @relation("StudentInquiries")
+  listings         Listing[]
+  receivedMessages Message[]  @relation("ReceivedMessages")
+  sentMessages     Message[]  @relation("SentMessages")
+}
+
+model Listing {
+  id           Int        @id @default(autoincrement())
+  title        String
+  description  String
+  price        Float
+  location     String
+  images       String[]
+  videos       String[]
+  availability Boolean    @default(true)
+  createdAt    DateTime   @default(now())
+  landlordId   Int
+  bookings     Booking[]
+  favorites    Favorite[]
+  inquiries    Inquiry[]
+  landlord     User       @relation(fields: [landlordId], references: [id])
+  messages     Message[]
+}
+
+model Booking {
+  id         Int       @id @default(autoincrement())
+  status     String    @default("pending")
+  message    String?
+  visitDate  DateTime?
+  createdAt  DateTime  @default(now())
+  studentId  Int
+  landlordId Int
+  listingId  Int
+  landlord   User      @relation("LandlordBookings", fields: [landlordId], references: [id])
+  listing    Listing   @relation(fields: [listingId], references: [id])
+  student    User      @relation("StudentBookings", fields: [studentId], references: [id])
+}
+
+model Message {
+  id         Int      @id @default(autoincrement())
+  content    String
+  read       Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  senderId   Int
+  receiverId Int
+  listingId  Int
+  listing    Listing  @relation(fields: [listingId], references: [id])
+  receiver   User     @relation("ReceivedMessages", fields: [receiverId], references: [id])
+  sender     User     @relation("SentMessages", fields: [senderId], references: [id])
+}
+
+model Inquiry {
+  id        Int      @id @default(autoincrement())
+  message   String
+  status    String   @default("pending")
+  createdAt DateTime @default(now())
+  studentId Int
+  listingId Int
+  listing   Listing  @relation(fields: [listingId], references: [id])
+  student   User     @relation("StudentInquiries", fields: [studentId], references: [id])
+}
+
+model Favorite {
+  id        Int     @id @default(autoincrement())
+  userId    Int
+  listingId Int
+  listing   Listing @relation(fields: [listingId], references: [id])
+  user      User    @relation(fields: [userId], references: [id])
+
+  @@unique([userId, listingId])
+}

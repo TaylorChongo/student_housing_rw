@@ -3,7 +3,7 @@ import { Home, Mail, Phone, Instagram, Twitter, Facebook, ArrowUpRight } from 'l
 
 const Footer = () => {
   return (
-    <footer className="bg-slate-900 text-white pt-24 pb-12 px-6 border-t border-white/5">
+    <footer id="site-footer" className="bg-slate-900 text-white pt-24 pb-12 px-6 border-t border-white/5">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-16 mb-20">
         <div className="md:col-span-1">
           <Link to="/" className="text-2xl font-black text-white flex items-center gap-2 tracking-tight mb-6">

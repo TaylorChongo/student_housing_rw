@@ -16,6 +16,7 @@ import {
 const Home = () => {
   const [latestListings, setLatestListings] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [heroSearch, setHeroSearch] = useState('');
   const navigate = useNavigate();
   const user = getCurrentUser();
 
@@ -25,6 +26,25 @@ const Home = () => {
       setLoading(false);
     }).catch(() => setLoading(false));
   }, []);
+
+  const handleHeroSearch = (e) => {
+    e.preventDefault();
+    const query = heroSearch.trim();
+    navigate(query ? `/listings?search=${encodeURIComponent(query)}` : '/listings');
+  };
+
+  const heroSuggestions = [
+    { label: 'Near campus', params: { search: 'campus' } },
+    { label: 'Kacyiru rooms', params: { location: 'Kacyiru' } },
+    { label: 'Under $300', params: { maxPrice: '300' } },
+    { label: 'Private studio', params: { search: 'studio' } },
+  ];
+
+  const handleHeroSuggestion = (suggestion) => {
+    const params = new URLSearchParams(suggestion.params);
+    setHeroSearch(suggestion.label);
+    navigate(`/listings?${params.toString()}`);
+  };
 
   return (
     <div className="pb-0">
@@ -48,24 +68,44 @@ const Home = () => {
               <span>Join <span className="text-emerald-400">2,000+</span> students in Rwanda</span>
             </div>
             
-            <h1 className="text-5xl md:text-8xl font-medium text-white mb-6 leading-[0.95] tracking-tighter italic font-serif drop-shadow-2xl">
+            <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-white mb-6 leading-[1.02] tracking-normal drop-shadow-2xl">
               Your next home <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-300 not-italic">is just a chat away.</span>
+              <span className="text-emerald-400 italic">is just a chat away.</span>
             </h1>
             
-            <p className="text-white/80 text-base md:text-xl font-light mb-12 max-w-3xl mx-auto leading-relaxed drop-shadow-lg tracking-wide">
+            <p className="text-white/85 text-base md:text-xl font-semibold mb-12 max-w-3xl mx-auto leading-relaxed drop-shadow-lg">
               The only platform in Rwanda where students talk directly to landlords. <span className="text-white font-semibold">No agents. No hidden fees. 100% Verified.</span>
             </p>
             
-            <div className="flex flex-col sm:flex-row gap-6 justify-center">
-              <Link to="/listings" className="bg-emerald-600 text-white px-10 py-4 rounded-full font-black text-base hover:bg-emerald-500 transition-all shadow-xl shadow-emerald-900/20 active:scale-95 flex items-center gap-3">
-                <Search size={22} strokeWidth={3} />
-                <span>Browse Listings</span>
-              </Link>
-              <Link to="/register" className="bg-white/10 backdrop-blur-md text-white border border-white/20 px-10 py-4 rounded-full font-black text-base hover:bg-white/20 transition-all active:scale-95">
-                Join Community
-              </Link>
-            </div>
+            <form onSubmit={handleHeroSearch} className="w-full max-w-2xl mx-auto">
+              <div className="bg-white/10 backdrop-blur-xl p-2 rounded-full shadow-2xl shadow-slate-950/20 border border-white/20 flex items-center gap-2">
+                <div className="pl-4 text-emerald-300">
+                  <Search size={22} strokeWidth={3} />
+                </div>
+                <input
+                  type="text"
+                  value={heroSearch}
+                  onChange={(e) => setHeroSearch(e.target.value)}
+                  placeholder="Search by area or university..."
+                  className="flex-1 bg-transparent px-2 py-4 text-white font-bold outline-none placeholder:text-white/60 min-w-0"
+                />
+                <button type="submit" className="bg-emerald-600 text-white px-6 md:px-8 py-4 rounded-full font-black text-sm hover:bg-emerald-700 transition-all active:scale-95">
+                  Search
+                </button>
+              </div>
+              <div className="mt-4 flex flex-wrap justify-center gap-3">
+                {heroSuggestions.map((suggestion) => (
+                  <button
+                    key={suggestion.label}
+                    type="button"
+                    onClick={() => handleHeroSuggestion(suggestion)}
+                    className="px-4 py-2 rounded-full bg-white/10 border border-white/15 text-white/85 text-xs font-black hover:bg-white/20 hover:text-white transition-all"
+                  >
+                    {suggestion.label}
+                  </button>
+                ))}
+              </div>
+            </form>
           </div>
         </div>
       </section>
@@ -272,54 +312,58 @@ const Home = () => {
       </section>
 
       {/* How It Works Section */}
-      <section className="py-24 px-6 max-w-7xl mx-auto">
-        <div className="text-center mb-20">
+      <section className="py-16 px-6 max-w-7xl mx-auto">
+        <div className="text-center mb-12">
           <h2 className="text-4xl md:text-5xl font-black text-slate-950 italic uppercase tracking-tighter mb-4">How It Works</h2>
           <p className="text-gray-500 font-medium text-lg">Your journey to a new home in three simple steps.</p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-16">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
           <div className="flex flex-col items-center text-center group">
-            <div className="w-full aspect-square max-w-[160px] mb-8 group-hover:scale-105 transition-transform duration-500">
+            <div className="w-full aspect-square max-w-[120px] mb-5 group-hover:scale-105 transition-transform duration-500">
               <SearchIllustration />
             </div>
-            <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center mb-6 text-xl font-black border border-emerald-100 shadow-sm">1</div>
-            <h3 className="text-2xl font-black text-slate-950 mb-4 italic">Find Your Place</h3>
+            <div className="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center mb-4 text-lg font-black border border-emerald-100 shadow-sm">1</div>
+            <h3 className="text-xl font-black text-slate-950 mb-3 italic">Find Your Place</h3>
             <p className="text-gray-500 font-medium leading-relaxed">Browse through hundreds of verified listings near your campus.</p>
           </div>
           <div className="flex flex-col items-center text-center group">
-            <div className="w-full aspect-square max-w-[160px] mb-8 group-hover:scale-105 transition-transform duration-500">
+            <div className="w-full aspect-square max-w-[120px] mb-5 group-hover:scale-105 transition-transform duration-500">
               <ChatIllustration />
             </div>
-            <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center mb-6 text-xl font-black border border-emerald-100 shadow-sm">2</div>
-            <h3 className="text-2xl font-black text-slate-950 mb-4 italic">Chat & Verify</h3>
+            <div className="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center mb-4 text-lg font-black border border-emerald-100 shadow-sm">2</div>
+            <h3 className="text-xl font-black text-slate-950 mb-3 italic">Chat & Verify</h3>
             <p className="text-gray-500 font-medium leading-relaxed">Message landlords directly through our secure platform.</p>
           </div>
           <div className="flex flex-col items-center text-center group">
-            <div className="w-full aspect-square max-w-[160px] mb-8 group-hover:scale-105 transition-transform duration-500">
+            <div className="w-full aspect-square max-w-[120px] mb-5 group-hover:scale-105 transition-transform duration-500">
               <SecureIllustration />
             </div>
-            <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center mb-6 text-xl font-black border border-emerald-100 shadow-sm">3</div>
-            <h3 className="text-2xl font-black text-slate-950 mb-4 italic">Secure Your Home</h3>
+            <div className="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center mb-4 text-lg font-black border border-emerald-100 shadow-sm">3</div>
+            <h3 className="text-xl font-black text-slate-950 mb-3 italic">Secure Your Home</h3>
             <p className="text-gray-500 font-medium leading-relaxed">Finalize the deal without any agent fees or hidden costs.</p>
           </div>
         </div>
       </section>
 
       {/* Community Call to Action */}
-      <section className="px-6 py-24">
-        <div className="max-w-4xl mx-auto bg-emerald-600 rounded-[3rem] p-12 md:p-20 text-center relative overflow-hidden shadow-2xl shadow-emerald-900/20 group">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500 blur-[100px] -z-0 opacity-40" />
-          <div className="relative z-10">
-            <h2 className="text-3xl md:text-5xl font-black text-white mb-8 italic uppercase tracking-tighter">Ready to find your <br />perfect student home?</h2>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/register" className="bg-white text-emerald-600 px-10 py-4 rounded-2xl font-black text-sm hover:bg-gray-50 transition-colors shadow-xl">
-                Create Free Account
-              </Link>
-              <Link to="/listings" className="bg-emerald-700 text-white px-10 py-4 rounded-2xl font-black text-sm hover:bg-emerald-800 transition-colors border border-emerald-500/30">
-                Browse Listings
-              </Link>
-            </div>
-            <p className="mt-8 text-emerald-100 font-medium text-xs">Join 2,000+ students already using our platform in Rwanda.</p>
+      <section className="px-6 py-20 text-center">
+        <div className="max-w-4xl mx-auto">
+          <div className="inline-flex items-center gap-2 text-emerald-600 text-[10px] font-black uppercase tracking-widest mb-6">
+            <Sparkles size={14} /> Student Housing RW
+          </div>
+          <h2 className="text-3xl md:text-5xl font-black text-slate-950 mb-6 italic tracking-tight leading-tight">
+            Ready to find your perfect student home?
+          </h2>
+          <p className="text-gray-500 font-medium leading-relaxed max-w-2xl mx-auto mb-8">
+            Join 2,000+ students using verified listings and direct landlord chat across Rwanda.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link to="/register" className="bg-emerald-600 text-white px-10 py-4 rounded-2xl font-black text-sm hover:bg-emerald-700 transition-colors shadow-lg shadow-emerald-100">
+              Create Free Account
+            </Link>
+            <Link to="/listings" className="bg-white text-slate-950 px-10 py-4 rounded-2xl font-black text-sm hover:border-emerald-600 transition-colors border border-gray-200">
+              Browse Listings
+            </Link>
           </div>
         </div>
       </section>
@@ -329,7 +373,7 @@ const Home = () => {
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row items-center justify-center gap-10 md:gap-20">
             <p className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-400 whitespace-nowrap">Trusted at</p>
-            <div className="flex flex-wrap justify-center items-center gap-10 md:gap-16 grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-500">
+            <div className="flex flex-wrap justify-center items-center gap-10 md:gap-16 opacity-100 transition-all duration-500">
               {[
                 "https://socialinnovationinhealth.org/wp-content/uploads/2024/10/rwanda-1024x538-1-300x158.jpg",
                 "https://engineering.cmu.edu/afretec/_files/images/members/cmu-africa-logo.png",
@@ -337,7 +381,7 @@ const Home = () => {
                 "https://opportunityapi.ini.rw/uploads/public/companies/logos/37fd8dce-7623-4df5-a2df-f6fcbee909bb.jpg",
                 "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRdne_xoFoO8igWGJ2cv4Nh7LNqzmc8Y5uDMg&s"
               ].map((src, i) => (
-                <div key={i} className="h-10 md:h-12 w-auto flex items-center justify-center">
+                <div key={i} className="h-14 md:h-16 w-auto flex items-center justify-center">
                   <img src={src} className="max-h-full w-auto object-contain" alt="Partner Logo" />
                 </div>
               ))}

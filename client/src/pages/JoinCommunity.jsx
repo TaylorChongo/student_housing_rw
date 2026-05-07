@@ -1,6 +1,7 @@
 import { Building2, Heart, Rocket, Target, Users, Zap, ArrowRight, ShieldCheck, Globe } from 'lucide-react';
 import heroBg from '../assets/hero-bg.png';
-import n1 from '../assets/neighborhood-1.jpg';
+
+const communityProjectImage = 'https://bslbucketmain.s3.us-west-1.amazonaws.com/wp-content/uploads/2025/05/Screenshot-2025-05-19-at-2.48.19%E2%80%AFPM.png';
 
 const JoinCommunity = () => {
   const donationTiers = [
@@ -27,7 +28,7 @@ const JoinCommunity = () => {
   return (
     <div className="pb-24">
       {/* Visionary Hero */}
-      <section className="relative min-h-[80vh] flex items-center justify-center px-6 overflow-hidden">
+      <section className="relative min-h-[64vh] flex items-center justify-center px-6 overflow-hidden">
         <div className="absolute inset-0 z-0">
           <img 
             src={heroBg} 
@@ -37,15 +38,15 @@ const JoinCommunity = () => {
           <div className="absolute inset-0 bg-gradient-to-b from-slate-950/90 via-slate-950/80 to-slate-950" />
         </div>
         
-        <div className="relative z-10 max-w-5xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 bg-emerald-500 text-white px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-[0.3em] mb-12 shadow-2xl shadow-emerald-500/20">
+        <div className="relative z-10 max-w-4xl mx-auto text-center">
+          <div className="inline-flex items-center gap-2 bg-emerald-500 text-white px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-[0.25em] mb-8 shadow-2xl shadow-emerald-500/20">
             <Rocket size={14} /> The 2030 Vision
           </div>
-          <h1 className="text-5xl md:text-8xl font-black text-white mb-8 leading-[1.05] tracking-tighter italic uppercase">
+          <h1 className="text-4xl md:text-6xl font-black text-white mb-6 leading-[1.08] tracking-tighter italic uppercase">
             Building the <br />
             <span className="text-emerald-400 not-italic">future of campus.</span>
           </h1>
-          <p className="text-slate-400 text-xl md:text-2xl font-medium max-w-3xl mx-auto leading-relaxed">
+          <p className="text-slate-400 text-base md:text-lg font-medium max-w-2xl mx-auto leading-relaxed">
             We are moving beyond a platform. Our mission is to build affordable, modern, and high-tech student apartment complexes across every university neighborhood in Rwanda.
           </p>
         </div>
@@ -56,7 +57,7 @@ const JoinCommunity = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
           <div className="relative">
             <div className="aspect-square rounded-[4rem] overflow-hidden shadow-2xl border-8 border-white group">
-              <img src={n1} alt="Kigali Construction" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" />
+              <img src={communityProjectImage} alt="Student housing project" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" />
               <div className="absolute inset-0 bg-emerald-600/20 mix-blend-multiply" />
             </div>
             {/* Overlay Stat */}

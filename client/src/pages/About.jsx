@@ -5,7 +5,7 @@ const About = () => {
   return (
     <div className="pb-24">
       {/* Hero Section */}
-      <section className="relative h-[60vh] flex items-center justify-center px-6 overflow-hidden">
+      <section className="relative h-[52vh] flex items-center justify-center px-6 overflow-hidden">
         <div className="absolute inset-0 z-0">
           <img 
             src={heroBg} 
@@ -15,12 +15,12 @@ const About = () => {
           <div className="absolute inset-0 bg-slate-950/70 backdrop-blur-[2px]" />
         </div>
         
-        <div className="relative z-10 max-w-4xl mx-auto text-center">
-          <h1 className="text-5xl md:text-7xl font-black text-white mb-6 leading-tight italic uppercase tracking-tighter">
+        <div className="relative z-10 max-w-3xl mx-auto text-center">
+          <h1 className="text-4xl md:text-5xl font-black text-white mb-5 leading-tight italic uppercase tracking-tighter">
             We're on a mission to <br />
             <span className="text-emerald-400 not-italic">redefine student living.</span>
           </h1>
-          <p className="text-gray-300 text-lg md:text-xl font-medium max-w-2xl mx-auto leading-relaxed">
+          <p className="text-gray-300 text-base md:text-lg font-medium max-w-2xl mx-auto leading-relaxed">
             Founded in Kigali, SHRW is the first direct-to-landlord platform designed specifically for the unique needs of the Rwandan student community.
           </p>
         </div>

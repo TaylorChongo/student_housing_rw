@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import api from '../services/api';
-import { MapPin, Zap, ShieldCheck, Bookmark, Search, SlidersHorizontal } from 'lucide-react';
+import { MapPin, Zap, ShieldCheck, Bookmark, Search, SlidersHorizontal, X } from 'lucide-react';
 import { getCurrentUser } from '../services/authService';
 import { saveListing, getSavedListings } from '../services/interactionService';
 import BackButton from '../components/BackButton';
@@ -14,15 +14,33 @@ const Listings = () => {
   const user = getCurrentUser();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
-  const initialSearch = searchParams.get('search') || '';
+  const filtersFromUrl = {
+    search: searchParams.get('search') || '',
+    location: searchParams.get('location') || '',
+    minPrice: searchParams.get('minPrice') || '',
+    maxPrice: searchParams.get('maxPrice') || '',
+    availability: searchParams.get('availability') || '',
+  };
   
-  const [searchValue, setSearchValue] = useState(initialSearch);
+  const [searchValue, setSearchValue] = useState(filtersFromUrl.search);
+  const [filters, setFilters] = useState(filtersFromUrl);
+  const [showFilters, setShowFilters] = useState(false);
 
-  const fetchData = useCallback(async (query = '') => {
+  const buildQueryString = (nextFilters) => {
+    const params = new URLSearchParams();
+    Object.entries(nextFilters).forEach(([key, value]) => {
+      const cleanValue = String(value || '').trim();
+      if (cleanValue) params.set(key, cleanValue);
+    });
+    return params.toString();
+  };
+
+  const fetchData = useCallback(async (activeFilters) => {
     setLoading(true);
     try {
+      const queryString = buildQueryString({ ...activeFilters, limit: 50 });
       const [listingsRes, favoritesRes] = await Promise.all([
-        api.get(`/listings${query ? `?search=${query}` : ''}`),
+        api.get(`/listings${queryString ? `?${queryString}` : ''}`),
         user?.role === 'student' ? getSavedListings() : Promise.resolve({ data: [] })
       ]);
       setListings(listingsRes.data.listings);
@@ -35,8 +53,17 @@ const Listings = () => {
   }, [user?.role]);
 
   useEffect(() => {
-    fetchData(initialSearch);
-  }, [user?.id, initialSearch, fetchData]);
+    const nextFilters = {
+      search: searchParams.get('search') || '',
+      location: searchParams.get('location') || '',
+      minPrice: searchParams.get('minPrice') || '',
+      maxPrice: searchParams.get('maxPrice') || '',
+      availability: searchParams.get('availability') || '',
+    };
+    setFilters(nextFilters);
+    setSearchValue(nextFilters.search);
+    fetchData(nextFilters);
+  }, [location.search, user?.id, fetchData]);
 
   const handleToggleSave = async (e, id) => {
     e.preventDefault();
@@ -53,13 +80,33 @@ const Listings = () => {
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
-    navigate(`/listings?search=${searchValue}`);
+    const nextFilters = { ...filters, search: searchValue };
+    const queryString = buildQueryString(nextFilters);
+    navigate(queryString ? `/listings?${queryString}` : '/listings');
   };
+
+  const handleFilterChange = (field, value) => {
+    setFilters(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleApplyFilters = () => {
+    const nextFilters = { ...filters, search: searchValue };
+    const queryString = buildQueryString(nextFilters);
+    navigate(queryString ? `/listings?${queryString}` : '/listings');
+  };
+
+  const handleClearFilters = () => {
+    setSearchValue('');
+    setFilters({ search: '', location: '', minPrice: '', maxPrice: '', availability: '' });
+    navigate('/listings');
+  };
+
+  const activeFilterCount = Object.values(filters).filter(Boolean).length;
 
   return (
     <div className="max-w-7xl mx-auto px-6 py-10 pb-32">
       <div className="mb-4">
-        <BackButton fallbackPath="/" label="Back to Discovery" />
+        <BackButton />
       </div>
       {/* Search Header */}
       <div className="mb-10">
@@ -75,10 +122,88 @@ const Listings = () => {
             />
             <Search size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-emerald-600 transition-colors" />
           </form>
-          <button className="p-4 bg-white border border-gray-200 rounded-2xl text-slate-950 hover:bg-gray-50 transition">
+          <button
+            type="button"
+            onClick={() => setShowFilters(prev => !prev)}
+            className={`relative p-4 bg-white border rounded-2xl text-slate-950 hover:bg-gray-50 transition ${showFilters || activeFilterCount ? 'border-emerald-600 text-emerald-600' : 'border-gray-200'}`}
+            aria-label="Toggle listing filters"
+          >
             <SlidersHorizontal size={20} />
+            {activeFilterCount > 0 && (
+              <span className="absolute -top-2 -right-2 w-5 h-5 bg-emerald-600 text-white rounded-full text-[10px] font-black flex items-center justify-center">
+                {activeFilterCount}
+              </span>
+            )}
           </button>
         </div>
+
+        {showFilters && (
+          <div className="mt-4 bg-white border border-gray-100 rounded-[2rem] p-5 shadow-sm">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div>
+                <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Location</label>
+                <input
+                  type="text"
+                  placeholder="Kacyiru, Remera..."
+                  className="input-field bg-gray-50"
+                  value={filters.location}
+                  onChange={(e) => handleFilterChange('location', e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Min Price</label>
+                <input
+                  type="number"
+                  min="0"
+                  placeholder="$100"
+                  className="input-field bg-gray-50"
+                  value={filters.minPrice}
+                  onChange={(e) => handleFilterChange('minPrice', e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Max Price</label>
+                <input
+                  type="number"
+                  min="0"
+                  placeholder="$300"
+                  className="input-field bg-gray-50"
+                  value={filters.maxPrice}
+                  onChange={(e) => handleFilterChange('maxPrice', e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Status</label>
+                <select
+                  className="input-field bg-gray-50"
+                  value={filters.availability}
+                  onChange={(e) => handleFilterChange('availability', e.target.value)}
+                >
+                  <option value="">Any listing</option>
+                  <option value="true">Available now</option>
+                  <option value="false">Unavailable</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-3 justify-end mt-5">
+              <button
+                type="button"
+                onClick={handleClearFilters}
+                className="px-5 py-3 rounded-2xl border border-gray-200 text-slate-500 font-black text-sm hover:text-slate-950 hover:bg-gray-50 transition flex items-center justify-center gap-2"
+              >
+                <X size={16} /> Clear
+              </button>
+              <button
+                type="button"
+                onClick={handleApplyFilters}
+                className="px-6 py-3 rounded-2xl bg-emerald-600 text-white font-black text-sm hover:bg-emerald-700 transition"
+              >
+                Apply Filters
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       {loading ? (
@@ -90,7 +215,7 @@ const Listings = () => {
       ) : listings.length === 0 ? (
         <div className="text-center py-20 bg-white rounded-[2rem] border border-dashed border-gray-200">
           <p className="text-gray-400 font-bold">No properties found matching your search.</p>
-          <button onClick={() => { setSearchValue(''); navigate('/listings'); }} className="text-emerald-600 font-black mt-2 underline">Clear Search</button>
+          <button onClick={handleClearFilters} className="text-emerald-600 font-black mt-2 underline">Clear Filters</button>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">

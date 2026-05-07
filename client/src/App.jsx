@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import BottomNav from './components/BottomNav';
 import Footer from './components/Footer';
+import AIAssistantButton from './components/AIAssistantButton';
 import Home from './pages/Home';
 import Listings from './pages/Listings';
 import Login from './pages/Login';
@@ -42,6 +43,7 @@ function App() {
             <Route path="/bookings" element={<Bookings />} />
           </Routes>
         </main>
+        <AIAssistantButton />
         <div className="h-20 md:hidden shrink-0" aria-hidden="true" />
         <BottomNav />
         <Footer />

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Home, LogOut, Menu, X, Plus, ChevronRight } from 'lucide-react';
+import { Home, LogOut, Menu, X, Plus, ChevronRight, Languages } from 'lucide-react';
 import { getCurrentUser, logout } from '../services/authService';
 
 const Navbar = () => {
@@ -30,9 +30,9 @@ const Navbar = () => {
 
   const navLinks = [
     { name: 'Home', path: '/' },
-    { name: 'About Us', path: '/about' },
-    { name: 'Contact', path: '/contact' },
     { name: 'Join Community', path: '/community' },
+    { name: 'Contact', path: '/contact' },
+    { name: 'About Us', path: '/about' },
   ];
 
   const userLinks = user ? [
@@ -100,6 +100,17 @@ const Navbar = () => {
 
               {/* Actions */}
               <div className="flex items-center gap-3">
+                {!user && !isAuthPage && (
+                  <button
+                    type="button"
+                    className="hidden md:flex p-2.5 bg-gray-50 text-slate-500 hover:text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all"
+                    title="Switch language"
+                    aria-label="Switch language"
+                  >
+                    <Languages size={18} />
+                  </button>
+                )}
+
                 {user && user.role === 'landlord' && (
                   <Link 
                     to="/create-listing" 

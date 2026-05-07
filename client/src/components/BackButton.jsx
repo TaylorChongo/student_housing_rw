@@ -1,16 +1,11 @@
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 
-const BackButton = ({ fallbackPath = "/", label = "Back" }) => {
+const BackButton = ({ label = "Back" }) => {
   const navigate = useNavigate();
 
   const handleBack = () => {
-    // Check if there is history to go back to within the app
-    if (window.history.state && window.history.state.idx > 0) {
-      navigate(-1);
-    } else {
-      navigate(fallbackPath, { replace: true });
-    }
+    navigate(-1);
   };
 
   return (

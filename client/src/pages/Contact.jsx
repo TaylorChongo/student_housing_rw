@@ -1,19 +1,29 @@
 import { Mail, Phone, MapPin, Send, MessageSquare, Zap, ShieldCheck } from 'lucide-react';
+import heroBg from '../assets/hero-bg.png';
 
 const Contact = () => {
   return (
     <div className="pb-24">
       {/* Header */}
-      <section className="bg-slate-950 pt-32 pb-24 px-6">
-        <div className="max-w-7xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 bg-emerald-500/10 text-emerald-400 px-5 py-2.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] mb-8 border border-emerald-500/20">
+      <section className="relative min-h-[64vh] flex items-center justify-center px-6 overflow-hidden">
+        <div className="absolute inset-0 z-0">
+          <img
+            src={heroBg}
+            alt="Kigali support team"
+            className="w-full h-full object-cover grayscale opacity-40"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-slate-950/90 via-slate-950/80 to-slate-950" />
+        </div>
+
+        <div className="relative z-10 max-w-4xl mx-auto text-center">
+          <div className="inline-flex items-center gap-2 bg-emerald-500 text-white px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-[0.25em] mb-8 shadow-2xl shadow-emerald-500/20">
             <MessageSquare size={14} /> We're here to help
           </div>
-          <h1 className="text-5xl md:text-7xl font-black text-white mb-8 leading-tight italic uppercase tracking-tighter">
+          <h1 className="text-4xl md:text-6xl font-black text-white mb-6 leading-[1.08] tracking-tighter italic uppercase">
             Get in touch <br />
             <span className="text-emerald-400 not-italic">with our team.</span>
           </h1>
-          <p className="text-slate-400 text-lg md:text-xl font-medium max-w-2xl mx-auto leading-relaxed">
+          <p className="text-slate-400 text-base md:text-lg font-medium max-w-2xl mx-auto leading-relaxed">
             Have a question about a listing? Need help with your account? Our support team is ready to assist you.
           </p>
         </div>
@@ -95,12 +105,11 @@ const Contact = () => {
                 </div>
                 <div className="md:col-span-2 space-y-2">
                   <label className="text-[10px] font-black uppercase tracking-widest text-slate-950 ml-4">Subject</label>
-                  <select className="w-full bg-gray-50 border-2 border-transparent p-5 rounded-2xl font-bold focus:bg-white focus:border-emerald-500 outline-none transition-all appearance-none">
-                    <option>General Inquiry</option>
-                    <option>Support & Help</option>
-                    <option>Property Verification</option>
-                    <option>Business Partnerships</option>
-                  </select>
+                  <input
+                    type="text"
+                    placeholder="What is this about?"
+                    className="w-full bg-gray-50 border-2 border-transparent p-5 rounded-2xl font-bold focus:bg-white focus:border-emerald-500 outline-none transition-all"
+                  />
                 </div>
                 <div className="md:col-span-2 space-y-2">
                   <label className="text-[10px] font-black uppercase tracking-widest text-slate-950 ml-4">Your Message</label>

@@ -33,12 +33,30 @@ export const createListing = async (req: AuthRequest, res: Response) => {
 
 export const getAllListings = async (req: Request, res: Response) => {
   try {
-    const { page = 1, limit = 10, minPrice, maxPrice, location, availability } = req.query;
+    const {
+      page = 1,
+      limit = 10,
+      search,
+      minPrice,
+      maxPrice,
+      location,
+      availability,
+    } = req.query;
     
     const skip = (Number(page) - 1) * Number(limit);
     const take = Number(limit);
 
     const where: any = {};
+    if (search) {
+      const searchText = String(search).trim();
+      if (searchText) {
+        where.OR = [
+          { title: { contains: searchText, mode: 'insensitive' } },
+          { description: { contains: searchText, mode: 'insensitive' } },
+          { location: { contains: searchText, mode: 'insensitive' } },
+        ];
+      }
+    }
     if (minPrice) where.price = { ...where.price, gte: parseFloat(minPrice as string) };
     if (maxPrice) where.price = { ...where.price, lte: parseFloat(maxPrice as string) };
     if (location) where.location = { contains: location as string, mode: 'insensitive' };

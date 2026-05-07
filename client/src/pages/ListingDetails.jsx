@@ -16,11 +16,6 @@ const ListingDetails = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!user) {
-      navigate('/login');
-      return;
-    }
-    
     const fetchData = async () => {
       try {
         const [listingRes, favoritesRes] = await Promise.all([
@@ -38,14 +33,26 @@ const ListingDetails = () => {
     };
     
     fetchData();
-  }, [id, user, navigate]);
+  }, [id, user?.id, user?.role]);
 
   if (!listing) return <div className="text-center py-20 animate-pulse font-black text-slate-950">LOADING SECURE DATA...</div>;
 
   const isOwner = user?.id === listing.landlordId;
 
-  const handleContact = () => navigate(`/messages/${id}/${listing.landlordId}`);
+  const handleContact = () => {
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+    navigate(`/messages/${id}/${listing.landlordId}`);
+  };
+
   const handleSave = async () => {
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+
     try {
       await saveListing(listing.id);
       setIsSaved(!isSaved);
@@ -63,6 +70,11 @@ const ListingDetails = () => {
 
   const handleBooking = async (e) => {
     e.preventDefault();
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+
     setSubmitting(true);
     try {
       await createBooking({ ...bookingData, listingId: id });
@@ -85,7 +97,7 @@ const ListingDetails = () => {
           <ArrowLeft size={20} />
         </button>
         <div className="flex gap-2 pointer-events-auto">
-          {user?.role === 'student' && (
+          {(!user || user?.role === 'student') && (
             <button onClick={handleSave} className="p-2 bg-white/90 backdrop-blur rounded-xl shadow-sm text-emerald-600">
               <Bookmark size={20} fill={isSaved ? "currentColor" : "none"} />
             </button>
@@ -94,18 +106,20 @@ const ListingDetails = () => {
       </div>
 
       {/* Image Section */}
-      <div className="relative h-[45vh] md:h-[60vh] w-full bg-gray-100 overflow-hidden">
-        <img 
-          src={listing.images[0] || 'https://via.placeholder.com/1200x800'} 
-          className="w-full h-full object-cover" 
-          alt={listing.title} 
-        />
-        <div className="absolute bottom-6 left-6 bg-white/90 backdrop-blur px-4 py-2 rounded-2xl font-black text-slate-950 shadow-lg text-lg">
-          ${listing.price} <span className="text-xs font-bold text-gray-400">/ MONTH</span>
+      <div className="mx-auto max-w-5xl px-6 pt-24 md:pt-28">
+        <div className="relative h-72 w-full overflow-hidden rounded-[2rem] bg-gray-100 shadow-xl shadow-gray-100 md:h-[420px]">
+          <img 
+            src={listing.images[0] || 'https://via.placeholder.com/1200x800'} 
+            className="h-full w-full object-cover" 
+            alt={listing.title} 
+          />
+          <div className="absolute bottom-5 left-5 bg-white/90 backdrop-blur px-4 py-2 rounded-2xl font-black text-slate-950 shadow-lg text-lg">
+            ${listing.price} <span className="text-xs font-bold text-gray-400">/ MONTH</span>
+          </div>
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-6 py-10">
+      <div className="max-w-4xl mx-auto px-6 py-8 md:py-10">
         <div className="flex flex-col md:flex-row justify-between gap-8">
           <div className="flex-1 space-y-8">
             {/* Header Info */}
@@ -170,12 +184,12 @@ const ListingDetails = () => {
               <h3 className="font-black text-2xl text-slate-950 flex items-center gap-2 italic">
                 Ready to visit?
               </h3>
-              {user?.role === 'student' ? (
+              {(!user || user?.role === 'student') ? (
                 <form onSubmit={handleBooking} className="space-y-4">
                   <div>
                     <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Preferred Date</label>
                     <input 
-                      type="datetime-local" 
+                      type="date" 
                       required
                       className="w-full bg-gray-50 border border-gray-100 p-4 rounded-2xl text-sm font-bold focus:ring-2 focus:ring-emerald-600 outline-none transition-all" 
                       value={bookingData.visitDate}
@@ -198,7 +212,7 @@ const ListingDetails = () => {
 
       {/* Mobile Sticky CTA */}
       <div className="md:hidden fixed bottom-20 left-0 right-0 p-6 bg-gradient-to-t from-white via-white/90 to-transparent flex gap-3 z-40">
-        {!isOwner && user?.role === 'student' && (
+        {!isOwner && (!user || user?.role === 'student') && (
           <>
             <button onClick={handleContact} className="flex-1 bg-slate-950 text-white font-black py-5 rounded-[1.5rem] flex items-center justify-center gap-2 shadow-xl shadow-slate-100">
               <MessageSquare size={20} /> Message
@@ -214,7 +228,7 @@ const ListingDetails = () => {
       </div>
 
       {/* Mobile Visit Form */}
-      {user?.role === 'student' && !isOwner && (
+      {(!user || user?.role === 'student') && !isOwner && (
         <section id="visit-form" className="md:hidden px-6 py-10 bg-gray-50 mt-10">
           <div className="bg-white border border-gray-100 shadow-xl rounded-[2.5rem] p-8 space-y-6">
             <h3 className="font-black text-2xl text-slate-950 italic">Request a Visit</h3>
@@ -222,7 +236,7 @@ const ListingDetails = () => {
               <div>
                 <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Preferred Date</label>
                 <input 
-                  type="datetime-local" 
+                  type="date" 
                   required
                   className="w-full bg-gray-50 border border-gray-100 p-4 rounded-2xl text-sm font-bold focus:ring-2 focus:ring-emerald-600 outline-none transition-all" 
                   value={bookingData.visitDate}

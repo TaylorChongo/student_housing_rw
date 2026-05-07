@@ -1,14 +1,15 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../services/api';
-import { saveListing } from '../services/interactionService';
+import { saveListing, getSavedListings } from '../services/interactionService';
 import { createBooking } from '../services/bookingService';
 import { getCurrentUser } from '../services/authService';
-import { Heart, MessageSquare, Calendar, Send, Edit, Trash2, ArrowLeft, User } from 'lucide-react';
+import { Bookmark, MessageSquare, Calendar, Send, Edit, Trash2, ArrowLeft, User, ShieldCheck, Zap, Info, CheckCircle2 } from 'lucide-react';
 
 const ListingDetails = () => {
   const { id } = useParams();
   const [listing, setListing] = useState(null);
+  const [isSaved, setIsSaved] = useState(false);
   const [bookingData, setBookingData] = useState({ message: '', visitDate: '' });
   const [submitting, setSubmitting] = useState(false);
   const user = getCurrentUser();
@@ -19,10 +20,27 @@ const ListingDetails = () => {
       navigate('/login');
       return;
     }
-    api.get(`/listings/${id}`).then(res => setListing(res.data));
+    
+    const fetchData = async () => {
+      try {
+        const [listingRes, favoritesRes] = await Promise.all([
+          api.get(`/listings/${id}`),
+          user?.role === 'student' ? getSavedListings() : Promise.resolve({ data: [] })
+        ]);
+        setListing(listingRes.data);
+        if (user?.role === 'student') {
+          const saved = favoritesRes.data.some(f => f.listingId === parseInt(id));
+          setIsSaved(saved);
+        }
+      } catch (err) {
+        console.error("Error fetching listing details", err);
+      }
+    };
+    
+    fetchData();
   }, [id, user, navigate]);
 
-  if (!listing) return <div className="text-center mt-20">Loading details...</div>;
+  if (!listing) return <div className="text-center py-20 animate-pulse font-black text-slate-950">LOADING SECURE DATA...</div>;
 
   const isOwner = user?.id === listing.landlordId;
 
@@ -30,9 +48,9 @@ const ListingDetails = () => {
   const handleSave = async () => {
     try {
       await saveListing(listing.id);
-      alert('Toggled favorite status!');
+      setIsSaved(!isSaved);
     } catch (err) {
-      alert('Error saving listing');
+      console.error('Error saving listing');
     }
   };
 
@@ -57,115 +75,176 @@ const ListingDetails = () => {
     }
   };
 
-  return (
-    <div className="max-w-6xl mx-auto px-4 py-12">
-      <button 
-        onClick={() => navigate('/listings')} 
-        className="flex items-center gap-2 text-gray-500 hover:text-primary mb-8 transition font-bold group"
-      >
-        <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" /> 
-        Back to Listings
-      </button>
+  const amenities = ["High-speed WiFi", "24/7 Security", "Private Bathroom", "Study Desk", "Electricity Included"];
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-        <div className="space-y-6">
-          <img 
-            src={listing.images[0] || 'https://via.placeholder.com/600x400'} 
-            className="rounded-3xl w-full h-[500px] object-cover shadow-2xl border border-white" 
-            alt={listing.title} 
-          />
-          
+  return (
+    <div className="pb-32 bg-white">
+      {/* Mobile Top Bar */}
+      <div className="md:hidden fixed top-0 left-0 right-0 h-16 px-6 flex justify-between items-center z-50 bg-gradient-to-b from-black/50 to-transparent pointer-events-none">
+        <button onClick={() => navigate(-1)} className="p-2 bg-white/90 backdrop-blur rounded-xl shadow-sm pointer-events-auto">
+          <ArrowLeft size={20} />
+        </button>
+        <div className="flex gap-2 pointer-events-auto">
           {user?.role === 'student' && (
-            <form onSubmit={handleBooking} className="p-8 bg-white border rounded-3xl shadow-sm space-y-4">
-              <h3 className="font-black text-2xl text-gray-900 flex items-center gap-2">
-                <Calendar className="text-primary" /> Request a Visit
+            <button onClick={handleSave} className="p-2 bg-white/90 backdrop-blur rounded-xl shadow-sm text-emerald-600">
+              <Bookmark size={20} fill={isSaved ? "currentColor" : "none"} />
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Image Section */}
+      <div className="relative h-[45vh] md:h-[60vh] w-full bg-gray-100 overflow-hidden">
+        <img 
+          src={listing.images[0] || 'https://via.placeholder.com/1200x800'} 
+          className="w-full h-full object-cover" 
+          alt={listing.title} 
+        />
+        <div className="absolute bottom-6 left-6 bg-white/90 backdrop-blur px-4 py-2 rounded-2xl font-black text-slate-950 shadow-lg text-lg">
+          ${listing.price} <span className="text-xs font-bold text-gray-400">/ MONTH</span>
+        </div>
+      </div>
+
+      <div className="max-w-4xl mx-auto px-6 py-10">
+        <div className="flex flex-col md:flex-row justify-between gap-8">
+          <div className="flex-1 space-y-8">
+            {/* Header Info */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-2">
+                <div className="bg-green-50 text-emerald-600 px-3 py-1 rounded-lg flex items-center gap-1 text-[10px] font-black uppercase tracking-widest">
+                  <ShieldCheck size={14} /> Verified Listing
+                </div>
+                <div className="bg-emerald-50 text-emerald-600 px-3 py-1 rounded-lg flex items-center gap-1 text-[10px] font-black uppercase tracking-widest">
+                  <Zap size={14} fill="currentColor" /> 8.8 Move-in Score
+                </div>
+              </div>
+              <h1 className="text-3xl md:text-4xl font-black text-slate-950 leading-tight">{listing.title}</h1>
+              <div className="flex items-center gap-2 text-gray-400 font-medium">
+                <Info size={16} />
+                <span>{listing.location}</span>
+              </div>
+            </div>
+
+            {/* Amenities Grid */}
+            <div className="grid grid-cols-2 gap-4">
+              {amenities.map((a, idx) => (
+                <div key={idx} className="flex items-center gap-2 text-sm font-bold text-slate-950 bg-gray-50 p-3 rounded-xl border border-gray-100">
+                  <CheckCircle2 size={16} className="text-emerald-600" /> {a}
+                </div>
+              ))}
+            </div>
+
+            {/* Description */}
+            <div className="space-y-4">
+              <h3 className="font-black text-xl text-slate-950">About this place</h3>
+              <p className="text-gray-500 leading-relaxed font-medium">{listing.description}</p>
+            </div>
+
+            {/* Landlord Info */}
+            <div className="bg-slate-50 p-6 rounded-[2rem] border border-gray-100 flex items-center gap-4">
+              <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-emerald-600 shadow-sm border border-gray-100">
+                <User size={32} />
+              </div>
+              <div className="flex-1">
+                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Landlord</p>
+                <p className="text-lg font-black text-slate-950">{listing.landlord?.name}</p>
+                <div className="flex items-center gap-1 text-emerald-600 text-xs font-bold">
+                  <ShieldCheck size={12} /> Identity Verified
+                </div>
+              </div>
+              {isOwner ? (
+                <button onClick={() => navigate(`/edit-listing/${id}`)} className="p-3 bg-white text-slate-950 rounded-xl shadow-sm border border-gray-100">
+                  <Edit size={20} />
+                </button>
+              ) : (
+                <button onClick={handleContact} className="p-3 bg-emerald-600 text-white rounded-xl shadow-lg shadow-emerald-100">
+                  <MessageSquare size={20} />
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Visit Request Card (Desktop Only) */}
+          <div className="hidden md:block w-80 shrink-0">
+            <div className="sticky top-24 bg-white border border-gray-100 shadow-xl shadow-gray-100 rounded-[2.5rem] p-8 space-y-6">
+              <h3 className="font-black text-2xl text-slate-950 flex items-center gap-2 italic">
+                Ready to visit?
               </h3>
+              {user?.role === 'student' ? (
+                <form onSubmit={handleBooking} className="space-y-4">
+                  <div>
+                    <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Preferred Date</label>
+                    <input 
+                      type="datetime-local" 
+                      required
+                      className="w-full bg-gray-50 border border-gray-100 p-4 rounded-2xl text-sm font-bold focus:ring-2 focus:ring-emerald-600 outline-none transition-all" 
+                      value={bookingData.visitDate}
+                      onChange={e => setBookingData({...bookingData, visitDate: e.target.value})}
+                    />
+                  </div>
+                  <button type="submit" disabled={submitting} className="btn-primary w-full">
+                    {submitting ? 'Sending...' : 'Request Visit'} <Send size={18} />
+                  </button>
+                </form>
+              ) : (
+                <div className="p-4 bg-emerald-50 text-emerald-600 rounded-2xl text-sm font-bold">
+                  Landlords cannot request visits to their own properties.
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile Sticky CTA */}
+      <div className="md:hidden fixed bottom-20 left-0 right-0 p-6 bg-gradient-to-t from-white via-white/90 to-transparent flex gap-3 z-40">
+        {!isOwner && user?.role === 'student' && (
+          <>
+            <button onClick={handleContact} className="flex-1 bg-slate-950 text-white font-black py-5 rounded-[1.5rem] flex items-center justify-center gap-2 shadow-xl shadow-slate-100">
+              <MessageSquare size={20} /> Message
+            </button>
+            <button 
+              onClick={() => document.querySelector('#visit-form')?.scrollIntoView({ behavior: 'smooth' })} 
+              className="flex-[1.5] bg-emerald-600 text-white font-black py-5 rounded-[1.5rem] flex items-center justify-center gap-2 shadow-xl shadow-emerald-100"
+            >
+              <Calendar size={20} /> Book Visit
+            </button>
+          </>
+        )}
+      </div>
+
+      {/* Mobile Visit Form */}
+      {user?.role === 'student' && !isOwner && (
+        <section id="visit-form" className="md:hidden px-6 py-10 bg-gray-50 mt-10">
+          <div className="bg-white border border-gray-100 shadow-xl rounded-[2.5rem] p-8 space-y-6">
+            <h3 className="font-black text-2xl text-slate-950 italic">Request a Visit</h3>
+            <form onSubmit={handleBooking} className="space-y-4">
               <div>
-                <label className="block text-xs font-bold uppercase text-gray-400 mb-1">Preferred Date</label>
+                <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Preferred Date</label>
                 <input 
-                  type="date" 
+                  type="datetime-local" 
                   required
-                  className="w-full border-gray-200 bg-gray-50 border p-3 rounded-xl focus:ring-2 focus:ring-primary outline-none transition-all" 
+                  className="w-full bg-gray-50 border border-gray-100 p-4 rounded-2xl text-sm font-bold focus:ring-2 focus:ring-emerald-600 outline-none transition-all" 
                   value={bookingData.visitDate}
                   onChange={e => setBookingData({...bookingData, visitDate: e.target.value})}
                 />
               </div>
               <div>
-                <label className="block text-xs font-bold uppercase text-gray-400 mb-1">Message (Optional)</label>
+                <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Message</label>
                 <textarea 
-                  placeholder="I am interested..." 
-                  className="w-full border-gray-200 bg-gray-50 border p-3 rounded-xl h-32 focus:ring-2 focus:ring-primary outline-none transition-all"
+                  placeholder="I'm a student at UR looking for a room..." 
+                  className="w-full bg-gray-50 border border-gray-100 p-4 rounded-2xl text-sm font-bold h-32 focus:ring-2 focus:ring-emerald-600 outline-none transition-all"
                   value={bookingData.message}
                   onChange={e => setBookingData({...bookingData, message: e.target.value})}
                 />
               </div>
-              <button type="submit" disabled={submitting} className="w-full bg-primary text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-teal-800 transition-all shadow-lg disabled:opacity-50">
-                {submitting ? 'Sending...' : 'Confirm Request'} <Send size={18} />
+              <button type="submit" disabled={submitting} className="btn-primary w-full">
+                {submitting ? 'Sending...' : 'Confirm Request'}
               </button>
             </form>
-          )}
-        </div>
-        
-        <div className="space-y-8">
-          <div className="space-y-4">
-            <div className="flex justify-between items-start">
-              <h1 className="text-5xl font-black text-gray-900 leading-tight">{listing.title}</h1>
-              <div className="flex gap-2">
-                {isOwner && (
-                  <>
-                    <button onClick={() => navigate(`/edit-listing/${id}`)} className="p-3 rounded-2xl bg-white shadow-sm border border-gray-100 text-blue-500 hover:bg-blue-50 transition">
-                      <Edit size={24} />
-                    </button>
-                    <button onClick={handleDelete} className="p-3 rounded-2xl bg-white shadow-sm border border-gray-100 text-red-500 hover:bg-red-50 transition">
-                      <Trash2 size={24} />
-                    </button>
-                  </>
-                )}
-                {user?.role === 'student' && (
-                  <button onClick={handleSave} className="p-3 rounded-2xl bg-white shadow-sm border border-gray-100 hover:bg-red-50 text-gray-300 hover:text-red-500 transition">
-                    <Heart size={24} />
-                  </button>
-                )}
-              </div>
-            </div>
-            <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full font-bold text-lg">
-              ${listing.price} <span className="text-sm font-medium text-primary/60">/ Month</span>
-            </div>
           </div>
-
-          <div className="bg-white p-8 rounded-3xl border shadow-sm flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center font-bold text-primary">
-                <User size={24} />
-              </div>
-              <div>
-                <p className="text-xs font-bold uppercase text-gray-400">Property Owner</p>
-                <p className="font-black text-gray-900 text-lg">{listing.landlord?.name}</p>
-              </div>
-            </div>
-            {!isOwner && user?.role === 'student' && (
-              <button 
-                onClick={handleContact} 
-                className="text-primary font-bold hover:underline flex items-center gap-2"
-              >
-                <MessageSquare size={18} /> Chat
-              </button>
-            )}
-          </div>
-
-          <div className="bg-white p-8 rounded-3xl border shadow-sm">
-            <h3 className="font-black text-xl mb-4 text-gray-900">About the Home</h3>
-            <p className="text-gray-600 text-lg leading-relaxed whitespace-pre-wrap">{listing.description}</p>
-          </div>
-
-          {isOwner && (
-            <div className="bg-blue-50 p-6 rounded-3xl border border-blue-100">
-              <p className="text-blue-700 font-bold">This is your listing.</p>
-              <p className="text-blue-600 text-sm mt-1">You can edit the information or delete it using the icons above.</p>
-            </div>
-          )}
-        </div>
-      </div>
+        </section>
+      )}
     </div>
   );
 };

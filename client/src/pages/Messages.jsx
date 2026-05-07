@@ -1,46 +1,73 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getConversations } from '../services/messageService';
-import { MessageCircle } from 'lucide-react';
+import { MessageCircle, Search } from 'lucide-react';
 
 const Messages = () => {
   const [conversations, setConversations] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    getConversations().then(res => {
+  const fetchConvos = async () => {
+    try {
+      const res = await getConversations();
       setConversations(res.data);
+    } catch (err) {
+      console.error("Error fetching conversations", err);
+    } finally {
       setLoading(false);
-    });
+    }
+  };
+
+  useEffect(() => {
+    fetchConvos();
+    const interval = setInterval(fetchConvos, 10000); // Poll every 10s
+    return () => clearInterval(interval);
   }, []);
 
-  if (loading) return <div className="text-center mt-20">Loading messages...</div>;
+  if (loading) return <div className="text-center py-20 animate-pulse font-black text-slate-950">LOADING CONVERSATIONS...</div>;
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-12">
-      <h2 className="text-3xl font-bold mb-8 flex items-center gap-3">
-        <MessageCircle className="text-primary" /> Messages
-      </h2>
+    <div className="h-full flex flex-col max-w-4xl mx-auto px-6 py-10">
+      <div className="flex justify-between items-center mb-8 shrink-0">
+        <h2 className="text-3xl font-black text-slate-950 italic">Inbox</h2>
+        <div className="w-10 h-10 bg-white border border-gray-100 rounded-xl flex items-center justify-center text-gray-400">
+          <MessageCircle size={20} />
+        </div>
+      </div>
+
       {conversations.length === 0 ? (
-        <div className="text-center py-20 bg-gray-50 rounded-2xl border">
-          <p className="text-gray-500">No conversations yet.</p>
+        <div className="text-center py-32 bg-white rounded-[2.5rem] border border-dashed border-gray-200 flex-1 flex flex-col items-center justify-center">
+          <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center text-gray-300 mb-4">
+            <MessageCircle size={32} />
+          </div>
+          <p className="text-gray-400 font-bold">No conversations yet.</p>
+          <Link to="/listings" className="text-emerald-600 font-black mt-2 underline italic">Start discovery</Link>
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className="flex-1 space-y-4 pb-10">
           {conversations.map((convo, index) => (
             <Link 
               key={index} 
               to={`/messages/${convo.listing.id}/${convo.otherUser.id}`}
-              className="block bg-white p-6 rounded-2xl border hover:border-primary transition shadow-sm hover:shadow-md"
+              className={`block bg-white p-6 rounded-[2rem] border transition-all duration-300 shadow-sm hover:shadow-xl group ${convo.unreadCount > 0 ? 'border-emerald-600 bg-emerald-50/30' : 'hover:border-emerald-600 border-gray-100'}`}
             >
-              <div className="flex justify-between items-center">
-                <div>
-                  <h3 className="font-bold text-lg text-gray-900">{convo.listing.title}</h3>
-                  <p className="text-primary font-medium">Chat with {convo.otherUser.name}</p>
-                  <p className="text-gray-500 mt-1 line-clamp-1">{convo.lastMessage.content}</p>
+              <div className="flex justify-between items-start">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-1">
+                    <h3 className="font-black text-lg text-slate-950 truncate">{convo.listing.title}</h3>
+                    {convo.unreadCount > 0 && (
+                      <span className="bg-emerald-600 text-white text-[10px] font-black px-2 py-0.5 rounded-lg uppercase tracking-tighter">
+                        New
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-emerald-600 font-black text-xs uppercase tracking-widest mb-3">Chat with {convo.otherUser.name}</p>
+                  <p className={`text-sm line-clamp-1 font-medium ${convo.unreadCount > 0 ? 'text-slate-950 font-bold' : 'text-gray-400'}`}>
+                    {convo.lastMessage.content}
+                  </p>
                 </div>
-                <div className="text-right">
-                  <p className="text-xs text-gray-400">{new Date(convo.lastMessage.createdAt).toLocaleDateString()}</p>
+                <div className="text-right ml-4 shrink-0">
+                  <p className="text-[10px] font-black text-gray-300 uppercase tracking-widest">{new Date(convo.lastMessage.createdAt).toLocaleDateString()}</p>
                 </div>
               </div>
             </Link>

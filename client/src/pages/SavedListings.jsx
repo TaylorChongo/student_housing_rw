@@ -1,39 +1,104 @@
 import { useEffect, useState } from 'react';
-import { getSavedListings } from '../services/interactionService';
+import { getSavedListings, saveListing } from '../services/interactionService';
 import { Link } from 'react-router-dom';
+import { ArrowLeft, Bookmark, MapPin, Zap, ShieldCheck } from 'lucide-react';
 
 const SavedListings = () => {
   const [favorites, setFavorites] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  const fetchFavorites = () => {
     getSavedListings().then(res => {
       setFavorites(res.data);
       setLoading(false);
     });
+  };
+
+  useEffect(() => {
+    fetchFavorites();
   }, []);
 
-  if (loading) return <div className="text-center mt-20">Loading your favorites...</div>;
+  const handleToggleSave = async (e, id) => {
+    e.preventDefault();
+    e.stopPropagation();
+    try {
+      await saveListing(id);
+      setFavorites(prev => prev.filter(item => item.listing.id !== id));
+    } catch (err) {
+      console.error("Error toggling favorite", err);
+    }
+  };
+
+  if (loading) return <div className="text-center py-20 animate-pulse font-black text-slate-950">LOADING SAVED PLACES...</div>;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-12">
-      <h2 className="text-3xl font-bold mb-8">My Saved Properties</h2>
+    <div className="max-w-7xl mx-auto px-6 py-10 pb-32">
+      <Link 
+        to="/listings" 
+        className="inline-flex items-center gap-2 text-gray-400 hover:text-emerald-600 mb-8 transition font-black text-xs uppercase tracking-widest group"
+      >
+        <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> 
+        Back to discovery
+      </Link>
+      
+      <h2 className="text-3xl font-black text-slate-950 mb-10 italic">Saved Collection</h2>
+      
       {favorites.length === 0 ? (
-        <div className="text-center py-20 bg-gray-50 rounded-2xl border-2 border-dashed">
-          <p className="text-gray-500">You haven't saved any properties yet.</p>
-          <Link to="/listings" className="text-primary font-bold mt-4 inline-block hover:underline">Start browsing</Link>
+        <div className="text-center py-32 bg-white rounded-[2.5rem] border border-dashed border-gray-200">
+          <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center text-gray-300 mx-auto mb-4">
+            <Bookmark size={32} />
+          </div>
+          <p className="text-gray-400 font-bold">Your collection is empty.</p>
+          <Link to="/listings" className="text-emerald-600 font-black mt-2 underline italic inline-block">Explore homes</Link>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {favorites.map(item => (
-            <div key={item.id} className="bg-white rounded-xl shadow-sm border overflow-hidden">
-              <img src={item.listing.images[0] || 'https://via.placeholder.com/400x300'} className="h-48 w-full object-cover" alt="" />
-              <div className="p-6">
-                <h3 className="text-xl font-bold mb-2">{item.listing.title}</h3>
-                <p className="text-gray-500 mb-4">{item.listing.location}</p>
-                <Link to={`/listings/${item.listing.id}`} className="text-primary font-bold hover:underline">View Property</Link>
+            <Link 
+              key={item.id} 
+              to={`/listings/${item.listing.id}`} 
+              className="card group"
+            >
+              <div className="relative h-60">
+                <img 
+                  src={item.listing.images && item.listing.images[0] ? item.listing.images[0] : 'https://via.placeholder.com/400x300'} 
+                  className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-700" 
+                  alt={item.listing.title} 
+                />
+                <div className="absolute top-4 left-4 bg-white/95 backdrop-blur px-3 py-1.5 rounded-xl font-black text-slate-950 shadow-sm text-sm">
+                  ${item.listing.price}/mo
+                </div>
+                <button 
+                  onClick={(e) => handleToggleSave(e, item.listing.id)}
+                  className="absolute top-4 right-4 p-2.5 bg-white/90 backdrop-blur rounded-xl shadow-sm hover:scale-110 transition text-emerald-600"
+                >
+                  <Bookmark 
+                    size={18} 
+                    fill="currentColor" 
+                  />
+                </button>
+                <div className="absolute bottom-4 left-4">
+                  <div className="bg-emerald-600 text-white px-2 py-1 rounded-lg flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider shadow-lg">
+                    <ShieldCheck size={12} /> Verified
+                  </div>
+                </div>
               </div>
-            </div>
+              <div className="p-6">
+                <h3 className="text-xl font-bold text-slate-950 group-hover:text-emerald-600 transition-colors leading-tight line-clamp-1">{item.listing.title}</h3>
+                <div className="flex items-center gap-1 text-gray-400 mt-2 text-sm font-medium">
+                  <MapPin size={14} />
+                  <span>{item.listing.location}</span>
+                </div>
+                
+                <div className="mt-6 pt-6 border-t border-gray-50 flex items-center justify-between">
+                  <div className="flex items-center gap-1 text-emerald-600 font-black text-[10px] uppercase tracking-widest">
+                    <Zap size={14} fill="currentColor" />
+                    <span>8.5/10 Ready</span>
+                  </div>
+                  <span className="text-[10px] font-black text-gray-300 uppercase tracking-widest italic italic">Saved</span>
+                </div>
+              </div>
+            </Link>
           ))}
         </div>
       )}

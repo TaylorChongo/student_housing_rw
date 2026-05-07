@@ -1,96 +1,175 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Home as HomeIcon, Search, ShieldCheck, PlusCircle, MapPin, User } from 'lucide-react';
+import { Search, MapPin, Zap, ShieldCheck, PlusCircle, ArrowUpRight, Users, Sparkles } from 'lucide-react';
 import api from '../services/api';
 import { getCurrentUser } from '../services/authService';
+import heroBg from '../assets/hero-bg.png';
+import n1 from '../assets/neighborhood-1.jpg';
+import n2 from '../assets/neighborhood-2.jpg';
+import studentsGroup from '../assets/students-group.png';
+import { 
+  SearchIllustration, 
+  ChatIllustration, 
+  SecureIllustration,
+} from '../components/Illustrations';
 
 const Home = () => {
   const [latestListings, setLatestListings] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const user = getCurrentUser();
 
   useEffect(() => {
-    const user = getCurrentUser();
-    if (user) {
-      navigate('/listings');
-      return;
-    }
-
-    api.get('/listings?limit=3').then(res => {
+    api.get('/listings?limit=6').then(res => {
       setLatestListings(res.data.listings);
       setLoading(false);
     }).catch(() => setLoading(false));
-  }, [navigate]);
-
-  const scrollToLatest = (e) => {
-    e.preventDefault();
-    document.getElementById('latest')?.scrollIntoView({ behavior: 'smooth' });
-  };
+  }, []);
 
   return (
-    <div className="space-y-20 pb-20">
-      {/* Hero Section */}
-      <section className="min-h-[85vh] flex flex-col items-center justify-center text-center px-4 bg-gradient-to-b from-teal-50 to-white">
-        <div className="max-w-4xl mx-auto">
-          <h1 className="text-6xl md:text-7xl font-black text-gray-900 mb-8 tracking-tight">
-            The Smart Way to Stay in <span className="text-primary">Rwanda</span>
-          </h1>
-          <p className="text-xl md:text-2xl text-gray-600 mb-10 leading-relaxed max-w-2xl mx-auto font-medium">
-            Connect directly with verified landlords. No agents, no hidden fees, just your perfect student home.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a 
-              href="#latest" 
-              onClick={scrollToLatest}
-              className="bg-primary text-white px-10 py-5 rounded-2xl text-xl font-bold hover:bg-teal-800 transition shadow-xl shadow-teal-100 flex items-center justify-center gap-2"
-            >
-              <Search size={24} /> Browse Listings
-            </a>
-            <Link to="/register?role=landlord" className="bg-white text-gray-900 border-2 border-gray-200 px-10 py-5 rounded-2xl text-xl font-bold hover:bg-gray-50 transition flex items-center justify-center gap-2">
-              <PlusCircle size={24} /> List Your Property
-            </Link>
+    <div className="pb-0">
+      {/* Modern Glass Hero */}
+      <section className="relative min-h-[85vh] flex items-center justify-center px-6 overflow-hidden">
+        {/* Background Image with Dynamic Overlay */}
+        <div className="absolute inset-0 z-0">
+          <img 
+            src={heroBg} 
+            alt="Kigali City" 
+            className="w-full h-full object-cover scale-105"
+          />
+          <div className="absolute inset-0 bg-slate-950/40 backdrop-blur-[1px]" />
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-slate-950/30" />
+        </div>
+
+        <div className="relative z-10 max-w-6xl mx-auto w-full font-sans">
+          <div className="flex flex-col items-center text-center">
+            <div className="inline-flex items-center gap-3 bg-white/5 backdrop-blur-2xl text-white px-5 py-2.5 rounded-full text-[11px] font-extrabold uppercase tracking-[0.2em] mb-10 border border-white/10 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.3)] group cursor-default transition-all hover:bg-white/10 hover:border-white/20">
+              <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse shadow-[0_0_12px_rgba(52,211,153,0.8)]" />
+              <span>Join <span className="text-emerald-400">2,000+</span> students in Rwanda</span>
+            </div>
+            
+            <h1 className="text-5xl md:text-8xl font-medium text-white mb-6 leading-[0.95] tracking-tighter italic font-serif drop-shadow-2xl">
+              Your next home <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-300 not-italic">is just a chat away.</span>
+            </h1>
+            
+            <p className="text-white/80 text-base md:text-xl font-light mb-12 max-w-3xl mx-auto leading-relaxed drop-shadow-lg tracking-wide">
+              The only platform in Rwanda where students talk directly to landlords. <span className="text-white font-semibold">No agents. No hidden fees. 100% Verified.</span>
+            </p>
+            
+            <div className="flex flex-col sm:flex-row gap-6 justify-center">
+              <Link to="/listings" className="bg-emerald-600 text-white px-10 py-4 rounded-full font-black text-base hover:bg-emerald-500 transition-all shadow-xl shadow-emerald-900/20 active:scale-95 flex items-center gap-3">
+                <Search size={22} strokeWidth={3} />
+                <span>Browse Listings</span>
+              </Link>
+              <Link to="/register" className="bg-white/10 backdrop-blur-md text-white border border-white/20 px-10 py-4 rounded-full font-black text-base hover:bg-white/20 transition-all active:scale-95">
+                Join Community
+              </Link>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Featured Listings Section */}
-      <section id="latest" className="max-w-7xl mx-auto px-4 scroll-mt-20">
-        <div className="flex justify-between items-end mb-10 border-l-4 border-primary pl-6">
-          <div>
-            <h2 className="text-4xl font-black text-gray-900 tracking-tight uppercase italic">Latest Openings</h2>
-            <p className="text-gray-500 mt-2 text-lg">Hand-picked homes for students, available right now.</p>
+      {/* Prime Locations Showcase */}
+      <section className="py-24 px-6 max-w-[90rem] mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-16 items-center">
+          <div className="lg:col-span-2 space-y-8">
+            <div className="inline-flex items-center gap-2 text-emerald-600 text-[10px] font-black uppercase tracking-widest">
+              <MapPin size={14} fill="currentColor" /> Strategic Living
+            </div>
+            <h2 className="text-4xl md:text-6xl font-black text-slate-950 italic uppercase tracking-tighter leading-tight">
+              Live where it <br />
+              <span className="text-emerald-600 not-italic">actually matters.</span>
+            </h2>
+            <p className="text-gray-500 text-lg font-medium leading-relaxed max-w-lg">
+              We don't just find you a house; we find you a home in Kigali's most vibrant neighborhoods. Whether you want to be a 5-minute walk from campus or in the heart of the city's popular spots, we've got you covered.
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4">
+              <div className="bg-emerald-50 p-6 rounded-[2rem] border border-emerald-100">
+                <p className="font-black text-slate-950 mb-2 italic uppercase text-sm">Near Universities</p>
+                <p className="text-xs text-gray-500 font-medium">Walk to CMU, ALU, or UR in minutes. No more long commutes.</p>
+              </div>
+              <div className="bg-slate-50 p-6 rounded-[2rem] border border-gray-100">
+                <p className="font-black text-slate-950 mb-2 italic uppercase text-sm">Safe Neighborhoods</p>
+                <p className="text-xs text-gray-500 font-medium">Verified properties in Kigali's most secure and student-friendly areas.</p>
+              </div>
+            </div>
           </div>
-          <Link to="/listings" className="text-primary font-bold hover:underline hidden sm:block bg-primary/5 px-4 py-2 rounded-xl font-black">View all →</Link>
+
+          <div className="lg:col-span-3 relative">
+            <div className="grid grid-cols-2 gap-6">
+              <div className="space-y-6">
+                <div className="aspect-[4/5] rounded-[3rem] overflow-hidden shadow-2xl transform hover:scale-[1.02] transition-transform duration-700">
+                  <img src={n1} alt="Kigali Neighborhood" className="w-full h-full object-cover" />
+                </div>
+                <div className="bg-emerald-600 p-10 rounded-[3rem] text-white shadow-xl shadow-emerald-900/20">
+                  <p className="text-5xl font-black italic mb-2">98%</p>
+                  <p className="text-xs font-black uppercase tracking-widest opacity-80">Location Match</p>
+                </div>
+              </div>
+              <div className="space-y-6 pt-20">
+                <div className="bg-slate-950 p-10 rounded-[3rem] text-white shadow-xl">
+                  <p className="text-3xl font-black italic leading-tight">Your commute <br/>ends here.</p>
+                </div>
+                <div className="aspect-[4/5] rounded-[3rem] overflow-hidden shadow-2xl transform hover:scale-[1.02] transition-transform duration-700">
+                  <img src={n2} alt="Kigali City View" className="w-full h-full object-cover" />
+                </div>
+              </div>
+            </div>
+            {/* Decorative element */}
+            <div className="absolute -z-10 -bottom-10 -right-10 w-80 h-80 bg-emerald-100 rounded-full blur-3xl opacity-50"></div>
+          </div>
+        </div>
+      </section>
+
+      {/* Latest Listings: Immediate Value */}
+      <section className="px-6 max-w-7xl mx-auto pt-16 pb-12">
+        <div className="flex flex-col md:flex-row justify-between items-end gap-6 mb-16">
+          <div className="max-w-xl">
+            <div className="inline-flex items-center gap-2 text-emerald-600 text-[10px] font-black uppercase tracking-widest mb-4">
+              <Zap size={14} fill="currentColor" /> Live Feed
+            </div>
+            <h2 className="text-4xl md:text-5xl font-black text-slate-950 italic uppercase tracking-tighter">Latest Openings</h2>
+            <p className="text-gray-500 mt-4 font-medium text-lg">Fresh properties listed in the last 24 hours. Be the first to reach out.</p>
+          </div>
+          <Link to="/listings" className="group flex items-center gap-2 bg-white border border-gray-200 px-8 py-4 rounded-2xl font-black text-slate-950 hover:border-emerald-600 transition-all text-sm">
+            View All Houses <ArrowUpRight size={18} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+          </Link>
         </div>
 
         {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[1, 2, 3].map(i => <div key={i} className="h-80 bg-gray-100 animate-pulse rounded-3xl"></div>)}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+            {[1, 2, 3, 4, 5, 6].map(i => <div key={i} className="aspect-[4/3] bg-emerald-950/5 animate-pulse rounded-[3rem]"></div>)}
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
             {latestListings.map(item => (
-              <Link key={item.id} to={`/listings/${item.id}`} className="group bg-white rounded-3xl shadow-sm border overflow-hidden hover:shadow-2xl transition-all duration-300">
-                <div className="relative h-64 overflow-hidden">
+              <Link key={item.id} to={`/listings/${item.id}`} className="card group rounded-[3rem]">
+                <div className="relative aspect-[4/3] overflow-hidden">
                   <img 
                     src={item.images && item.images[0] ? item.images[0] : 'https://via.placeholder.com/400x300'} 
-                    className="h-full w-full object-cover group-hover:scale-110 transition-transform duration-500" 
+                    className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-700" 
                     alt={item.title} 
-                    onError={(e) => { e.target.src = 'https://via.placeholder.com/400x300?text=Image+Not+Found'; }}
+                    loading="lazy"
                   />
-                  <div className="absolute top-4 right-4 bg-white/95 backdrop-blur px-3 py-1 rounded-full font-bold text-primary shadow-sm text-lg">
-                    ${item.price}/mo
+                  <div className="absolute top-6 left-6 bg-white/95 backdrop-blur px-4 py-2 rounded-2xl font-black text-slate-950 shadow-sm text-sm">
+                    ${item.price}<span className="text-[10px] text-gray-400">/mo</span>
+                  </div>
+                  <div className="absolute top-6 right-6 bg-emerald-600 text-white px-3 py-1.5 rounded-xl flex items-center gap-1 text-[10px] font-black uppercase tracking-wider shadow-lg">
+                    <ShieldCheck size={12} /> Verified
                   </div>
                 </div>
-                <div className="p-6">
-                  <h3 className="text-xl font-bold text-gray-900 group-hover:text-primary transition-colors line-clamp-1">{item.title}</h3>
-                  <div className="flex items-center gap-1 text-gray-400 mt-2 text-sm">
-                    <MapPin size={14} />
+                <div className="p-8">
+                  <h3 className="font-black text-slate-950 text-xl leading-tight line-clamp-1 group-hover:text-emerald-600 transition-colors italic">{item.title}</h3>
+                  <div className="flex items-center gap-1 text-gray-400 mt-2 text-sm font-bold">
+                    <MapPin size={14} className="text-emerald-600/30" />
                     <span>{item.location}</span>
                   </div>
-                  <div className="flex items-center gap-1 text-primary text-sm font-semibold mt-1">
-                    <User size={14} />
-                    <span>Owner: {item.landlord?.name}</span>
+                  <div className="mt-8 pt-6 border-t border-gray-50 flex items-center justify-between">
+                    <div className="flex items-center gap-1 text-emerald-600 font-black text-[10px] uppercase tracking-[0.2em]">
+                      <Zap size={14} fill="currentColor" /> 8.8 Move-in Ready
+                    </div>
+                    <span className="text-[10px] font-black text-gray-300 uppercase tracking-widest">15 min walk</span>
                   </div>
                 </div>
               </Link>
@@ -99,58 +178,171 @@ const Home = () => {
         )}
       </section>
 
-      {/* Main Features Grid */}
-      <section className="max-w-7xl mx-auto px-4 grid md:grid-cols-2 gap-12 pt-10 border-t border-gray-100">
-        <div className="bg-white p-10 rounded-[2.5rem] border shadow-sm hover:shadow-2xl transition-all duration-500 group">
-          <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center text-primary mb-8 group-hover:scale-110 transition-transform">
-            <ShieldCheck size={32} />
+      {/* Impact Stats */}
+      <section className="px-6 max-w-7xl mx-auto py-24 border-t border-gray-50">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+          <div className="relative order-2 lg:order-1">
+            <div className="aspect-[16/10] rounded-[3rem] overflow-hidden shadow-2xl shadow-emerald-900/20 transform -rotate-1 hover:rotate-0 transition-all duration-700">
+              <img src={studentsGroup} alt="Students in Rwanda" className="w-full h-full object-cover" />
+            </div>
           </div>
-          <h2 className="text-3xl font-black text-gray-900 mb-4">For Students</h2>
-          <p className="text-gray-500 text-lg mb-8 leading-relaxed">
-            Finding a home shouldn't be stressful. We verify every listing so you can search with confidence.
-          </p>
-          <ul className="space-y-4 mb-10 font-medium">
-            <li className="flex items-start gap-3 text-gray-700 font-medium"><ShieldCheck size={18} className="text-green-500 shrink-0 mt-1" /> Access to verified listings</li>
-            <li className="flex items-start gap-3 text-gray-700 font-medium"><ShieldCheck size={18} className="text-green-500 shrink-0 mt-1" /> Direct chat with owners</li>
-            <li className="flex items-start gap-3 text-gray-700 font-medium"><ShieldCheck size={18} className="text-green-500 shrink-0 mt-1" /> Schedule visits instantly</li>
-          </ul>
-          <Link to="/listings" className="bg-primary text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-teal-800 transition inline-flex items-center gap-2 shadow-lg shadow-teal-100">
-            <Search size={20} /> Browse Full Catalog
-          </Link>
-        </div>
 
-        <div className="bg-teal-900 p-10 rounded-[2.5rem] text-white shadow-xl hover:shadow-2xl transition-all duration-500 group">
-          <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center text-teal-300 mb-8 group-hover:scale-110 transition-transform">
-            <HomeIcon size={32} />
+          <div className="space-y-12 order-1 lg:order-2">
+            <div className="inline-flex items-center gap-2 text-emerald-600 text-[10px] font-black uppercase tracking-widest">
+              <Users size={14} fill="currentColor" /> Growing Community
+            </div>
+            <h2 className="text-4xl md:text-5xl font-black text-slate-950 italic uppercase tracking-tighter leading-tight">
+              Making student life <br />
+              <span className="text-emerald-600 not-italic">easier in Rwanda.</span>
+            </h2>
+            
+            <div className="grid grid-cols-2 gap-8 pt-4">
+              <div className="space-y-1">
+                <p className="text-4xl font-black text-slate-950 tracking-tighter italic">500+</p>
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-600">Properties Listed</p>
+              </div>
+              <div className="space-y-1">
+                <p className="text-4xl font-black text-slate-950 tracking-tighter italic">2k+</p>
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-600">Active Students</p>
+              </div>
+              <div className="space-y-1">
+                <p className="text-4xl font-black text-slate-950 tracking-tighter italic">12+</p>
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-600">Universities</p>
+              </div>
+              <div className="space-y-1">
+                <p className="text-4xl font-black text-slate-950 tracking-tighter italic">0%</p>
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-600">Commission</p>
+              </div>
+            </div>
           </div>
-          <h2 className="text-3xl font-black mb-4 text-white">For Landlords</h2>
-          <p className="text-teal-100/70 text-lg mb-8 leading-relaxed">
-            Reach thousands of local and international students. Manage your properties with ease.
-          </p>
-          <ul className="space-y-4 mb-10 font-medium text-teal-50">
-            <li className="flex items-start gap-3 shrink-0"><ShieldCheck size={18} className="text-teal-400 shrink-0 mt-1" /> List for free in minutes</li>
-            <li className="flex items-start gap-3 shrink-0"><ShieldCheck size={18} className="text-teal-400 shrink-0 mt-1" /> Powerful landlord dashboard</li>
-            <li className="flex items-start gap-3 shrink-0"><ShieldCheck size={18} className="text-teal-400 shrink-0 mt-1" /> Track visit requests easily</li>
-          </ul>
-          <Link to="/register?role=landlord" className="bg-white text-teal-900 px-8 py-4 rounded-xl font-bold text-lg hover:bg-teal-50 transition inline-flex items-center gap-2">
-            <PlusCircle size={20} /> List Your Property
-          </Link>
         </div>
       </section>
 
-      {/* Stats Section */}
-      <section className="max-w-5xl mx-auto px-4 py-16 flex flex-wrap justify-around gap-10 text-center bg-white rounded-[3rem] shadow-sm border">
-        <div>
-          <p className="text-5xl font-black text-primary italic">100%</p>
-          <p className="text-gray-400 font-bold uppercase text-xs mt-2 tracking-widest">Verified Houses</p>
+      {/* Role Deep-Dive: Features Grid */}
+      <section className="pt-12 pb-24 px-6 bg-emerald-950/5">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10">
+          {/* For Students Card */}
+          <div className="bg-white p-10 rounded-[3rem] border border-gray-100 shadow-2xl shadow-emerald-900/5 flex flex-col items-start hover:shadow-emerald-900/10 transition-all duration-500 group relative overflow-hidden">
+            <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center mb-8">
+              <ShieldCheck size={28} />
+            </div>
+            <h2 className="text-3xl font-black text-slate-950 mb-4 italic uppercase tracking-tight">For Students</h2>
+            <p className="text-gray-500 text-base mb-8 leading-relaxed font-medium">
+              Discover your next home with confidence. We connect you directly with verified owners, eliminating middle-men and hidden fees.
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 mb-10 w-full">
+              {[
+                "Direct Landlord Chat", "1-Click Visit Booking", "Zero Agency Fees", 
+                "Verified Legal Contracts", "Student-Only Community", "Instant Room Alerts"
+              ].map((feature, i) => (
+                <div key={i} className="flex items-center gap-2 text-[13px] font-bold text-slate-950">
+                  <Zap size={14} className="text-emerald-500" fill="currentColor" /> {feature}
+                </div>
+              ))}
+            </div>
+            <Link to="/listings" className="w-full bg-emerald-600 text-white font-black py-4 rounded-2xl text-center hover:bg-emerald-500 transition-colors">
+              Start Your Discovery
+            </Link>
+          </div>
+
+          {/* For Landlords Card */}
+          <div className="bg-slate-950 p-10 rounded-[3rem] text-white shadow-2xl flex flex-col items-start hover:shadow-slate-950/40 transition-all duration-500 group relative overflow-hidden">
+            <div className="w-12 h-12 bg-white/5 text-emerald-400 rounded-2xl flex items-center justify-center mb-8">
+              <PlusCircle size={28} />
+            </div>
+            <h2 className="text-3xl font-black mb-4 italic uppercase tracking-tight">For Landlords</h2>
+            <p className="text-slate-400 text-base mb-8 leading-relaxed font-medium">
+              Maximize your occupancy with high-quality international student tenants. Professional tools to manage your listings effortlessly.
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 mb-10 w-full">
+              {[
+                "Smart Inventory Mgmt", "Tenant Vetting System", "Performance Analytics",
+                "24/7 Priority Support", "Direct Payment Links", "Multi-Property Dashboard"
+              ].map((feature, i) => (
+                <div key={i} className="flex items-center gap-2 text-[13px] font-bold">
+                  <Zap size={14} className="text-emerald-400" fill="currentColor" /> {feature}
+                </div>
+              ))}
+            </div>
+            <Link to="/login" className="w-full bg-emerald-600 text-white font-black py-4 rounded-2xl text-center hover:bg-emerald-500 transition-colors">
+              Access Landlord Portal
+            </Link>
+          </div>
         </div>
-        <div>
-          <p className="text-5xl font-black text-primary italic">0%</p>
-          <p className="text-gray-400 font-bold uppercase text-xs mt-2 tracking-widest">Middle-man fees</p>
+      </section>
+
+      {/* How It Works Section */}
+      <section className="py-24 px-6 max-w-7xl mx-auto">
+        <div className="text-center mb-20">
+          <h2 className="text-4xl md:text-5xl font-black text-slate-950 italic uppercase tracking-tighter mb-4">How It Works</h2>
+          <p className="text-gray-500 font-medium text-lg">Your journey to a new home in three simple steps.</p>
         </div>
-        <div>
-          <p className="text-5xl font-black text-primary italic">Direct</p>
-          <p className="text-gray-400 font-bold uppercase text-xs mt-2 tracking-widest">Owner Access</p>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-16">
+          <div className="flex flex-col items-center text-center group">
+            <div className="w-full aspect-square max-w-[160px] mb-8 group-hover:scale-105 transition-transform duration-500">
+              <SearchIllustration />
+            </div>
+            <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center mb-6 text-xl font-black border border-emerald-100 shadow-sm">1</div>
+            <h3 className="text-2xl font-black text-slate-950 mb-4 italic">Find Your Place</h3>
+            <p className="text-gray-500 font-medium leading-relaxed">Browse through hundreds of verified listings near your campus.</p>
+          </div>
+          <div className="flex flex-col items-center text-center group">
+            <div className="w-full aspect-square max-w-[160px] mb-8 group-hover:scale-105 transition-transform duration-500">
+              <ChatIllustration />
+            </div>
+            <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center mb-6 text-xl font-black border border-emerald-100 shadow-sm">2</div>
+            <h3 className="text-2xl font-black text-slate-950 mb-4 italic">Chat & Verify</h3>
+            <p className="text-gray-500 font-medium leading-relaxed">Message landlords directly through our secure platform.</p>
+          </div>
+          <div className="flex flex-col items-center text-center group">
+            <div className="w-full aspect-square max-w-[160px] mb-8 group-hover:scale-105 transition-transform duration-500">
+              <SecureIllustration />
+            </div>
+            <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center mb-6 text-xl font-black border border-emerald-100 shadow-sm">3</div>
+            <h3 className="text-2xl font-black text-slate-950 mb-4 italic">Secure Your Home</h3>
+            <p className="text-gray-500 font-medium leading-relaxed">Finalize the deal without any agent fees or hidden costs.</p>
+          </div>
+        </div>
+      </section>
+
+      {/* Community Call to Action */}
+      <section className="px-6 py-24">
+        <div className="max-w-4xl mx-auto bg-emerald-600 rounded-[3rem] p-12 md:p-20 text-center relative overflow-hidden shadow-2xl shadow-emerald-900/20 group">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500 blur-[100px] -z-0 opacity-40" />
+          <div className="relative z-10">
+            <h2 className="text-3xl md:text-5xl font-black text-white mb-8 italic uppercase tracking-tighter">Ready to find your <br />perfect student home?</h2>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link to="/register" className="bg-white text-emerald-600 px-10 py-4 rounded-2xl font-black text-sm hover:bg-gray-50 transition-colors shadow-xl">
+                Create Free Account
+              </Link>
+              <Link to="/listings" className="bg-emerald-700 text-white px-10 py-4 rounded-2xl font-black text-sm hover:bg-emerald-800 transition-colors border border-emerald-500/30">
+                Browse Listings
+              </Link>
+            </div>
+            <p className="mt-8 text-emerald-100 font-medium text-xs">Join 2,000+ students already using our platform in Rwanda.</p>
+          </div>
+        </div>
+      </section>
+
+      {/* Trust Signal: University Partners */}
+      <section className="px-6 py-16 bg-white border-t border-gray-50">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-col md:flex-row items-center justify-center gap-10 md:gap-20">
+            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-400 whitespace-nowrap">Trusted at</p>
+            <div className="flex flex-wrap justify-center items-center gap-10 md:gap-16 grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-500">
+              {[
+                "https://socialinnovationinhealth.org/wp-content/uploads/2024/10/rwanda-1024x538-1-300x158.jpg",
+                "https://engineering.cmu.edu/afretec/_files/images/members/cmu-africa-logo.png",
+                "https://media.licdn.com/dms/image/v2/D4D0BAQGU-T7YEn-XOQ/company-logo_200_200/company-logo_200_200/0/1697007984951?e=2147483647&v=beta&t=f3mtoPZ2-D1h-PJrrC-9fWLxrKjW18N9FVCk8cdPWsc",
+                "https://opportunityapi.ini.rw/uploads/public/companies/logos/37fd8dce-7623-4df5-a2df-f6fcbee909bb.jpg",
+                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRdne_xoFoO8igWGJ2cv4Nh7LNqzmc8Y5uDMg&s"
+              ].map((src, i) => (
+                <div key={i} className="h-10 md:h-12 w-auto flex items-center justify-center">
+                  <img src={src} className="max-h-full w-auto object-contain" alt="Partner Logo" />
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
     </div>

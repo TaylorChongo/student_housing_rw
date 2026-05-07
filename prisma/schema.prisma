@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
 }
 
 datasource db {
@@ -47,6 +48,7 @@ model Booking {
   message    String?
   visitDate  DateTime?
   createdAt  DateTime  @default(now())
+
   studentId  Int
   landlordId Int
   listingId  Int
@@ -59,6 +61,9 @@ model Message {
   id         Int      @id @default(autoincrement())
   content    String
   read       Boolean  @default(false)
+  readAt     DateTime?
+  received   Boolean  @default(false)
+  receivedAt DateTime?
   createdAt  DateTime @default(now())
   senderId   Int
   receiverId Int

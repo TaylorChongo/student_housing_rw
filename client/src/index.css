@@ -3,7 +3,30 @@
 @tailwind utilities;
 
 @layer base {
+  html {
+    overflow-y: scroll;
+  }
   body {
-    @apply bg-gray-50 text-gray-900 font-sans;
+    @apply bg-emerald-50/40 text-slate-950 antialiased;
+    font-family: 'Inter', sans-serif;
+  }
+}
+
+* {
+  transition: layout 0.2s ease-out;
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-emerald-600 text-white font-bold py-4 px-6 rounded-2xl hover:opacity-90 transition-all shadow-lg shadow-emerald-100 flex items-center justify-center gap-2;
+  }
+  .btn-secondary {
+    @apply border-2 border-slate-950 text-slate-950 font-bold py-4 px-6 rounded-2xl hover:bg-slate-950 hover:text-white transition-all flex items-center justify-center gap-2;
+  }
+  .card {
+    @apply bg-white rounded-[2rem] shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300;
+  }
+  .input-field {
+    @apply w-full bg-white border border-gray-200 p-4 rounded-2xl focus:ring-2 focus:ring-emerald-600 outline-none transition-all text-slate-950 font-medium;
   }
 }

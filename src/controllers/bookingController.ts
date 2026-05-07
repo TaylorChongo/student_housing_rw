@@ -112,6 +112,28 @@ export const getBookingById = async (req: AuthRequest, res: Response) => {
   }
 };
 
+export const getPendingCount = async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user?.id;
+    const role = req.user?.role;
+
+    if (role !== 'landlord') {
+      return res.json({ count: 0 });
+    }
+
+    const count = await prisma.booking.count({
+      where: {
+        landlordId: userId,
+        status: 'pending',
+      },
+    });
+
+    res.json({ count });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 export const updateBookingStatus = async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
@@ -132,7 +154,9 @@ export const updateBookingStatus = async (req: AuthRequest, res: Response) => {
 
     const updatedBooking = await prisma.booking.update({
       where: { id: parseInt(id) },
-      data: { status },
+      data: { 
+        status
+      },
     });
 
     res.json(updatedBooking);

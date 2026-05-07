@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../services/api';
-import { Save, ArrowLeft } from 'lucide-react';
+import { Save, ArrowLeft, Type, DollarSign, MapPin, AlignLeft, Sparkles } from 'lucide-react';
 
 const EditListing = () => {
   const { id } = useParams();
   const [formData, setFormData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -23,66 +24,104 @@ const EditListing = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSubmitting(true);
     try {
-      await api.put(`/listings/${id}`, formData);
+      await api.put(`/listings/${id}`, { ...formData, price: parseFloat(formData.price) });
       navigate('/my-listings');
     } catch (err) {
       alert(err.response?.data?.error || 'Failed to update listing');
+    } finally {
+      setSubmitting(false);
     }
   };
 
-  if (loading) return <div className="text-center mt-20">Loading property details...</div>;
+  if (loading) return (
+    <div className="flex justify-center items-center min-h-[60vh]">
+      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-emerald-600"></div>
+    </div>
+  );
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-12">
-      <button onClick={() => navigate('/my-listings')} className="flex items-center gap-2 text-gray-500 hover:text-primary mb-6 transition font-bold">
-        <ArrowLeft size={20} /> Back to My Listings
-      </button>
+    <div className="max-w-4xl mx-auto px-6 py-12 pb-32">
+      <div className="mb-10 flex items-center justify-between">
+        <button 
+          onClick={() => navigate('/my-listings')} 
+          className="flex items-center gap-2 text-slate-500 hover:text-slate-950 transition font-black uppercase text-[10px] tracking-widest"
+        >
+          <ArrowLeft size={16} /> Back to My Properties
+        </button>
+        <div className="inline-flex items-center gap-2 bg-emerald-50 text-emerald-600 px-4 py-2 rounded-full text-xs font-black uppercase tracking-widest">
+          <Sparkles size={14} /> Editing Mode
+        </div>
+      </div>
 
-      <div className="bg-white p-8 md:p-12 rounded-3xl border shadow-xl">
-        <h2 className="text-3xl font-black mb-8 text-gray-900">Edit Property</h2>
-        
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label className="block text-xs font-bold uppercase text-gray-400 mb-2">Property Title</label>
-            <input 
-              className="w-full border-gray-200 bg-gray-50 border p-4 rounded-2xl focus:ring-2 focus:ring-primary outline-none transition-all" 
-              value={formData.title} 
-              onChange={e => setFormData({...formData, title: e.target.value})} 
-            />
-          </div>
+      <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-2xl shadow-gray-100 overflow-hidden">
+        <div className="p-10 border-b border-gray-50">
+          <h2 className="text-3xl font-black text-slate-950 italic">Update {formData.title}</h2>
+          <p className="text-gray-500 mt-2 font-medium">Keep your property information up to date for better results.</p>
+        </div>
 
-          <div>
-            <label className="block text-xs font-bold uppercase text-gray-400 mb-2">Description</label>
-            <textarea 
-              className="w-full border-gray-200 bg-gray-50 border p-4 rounded-2xl h-40 focus:ring-2 focus:ring-primary outline-none transition-all" 
-              value={formData.description} 
-              onChange={e => setFormData({...formData, description: e.target.value})} 
-            />
-          </div>
-
-          <div className="grid grid-cols-2 gap-6">
+        <form onSubmit={handleSubmit} className="p-10 space-y-6">
+          <div className="space-y-4">
             <div>
-              <label className="block text-xs font-bold uppercase text-gray-400 mb-2">Price ($ / mo)</label>
+              <label className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">
+                <Type size={14} className="text-emerald-600" /> Property Title
+              </label>
               <input 
-                className="w-full border-gray-200 bg-gray-50 border p-4 rounded-2xl focus:ring-2 focus:ring-primary outline-none transition-all" 
-                type="number" 
-                value={formData.price} 
-                onChange={e => setFormData({...formData, price: e.target.value})} 
+                type="text" 
+                value={formData.title} 
+                required 
+                className="w-full bg-gray-50 border border-gray-100 p-4 rounded-2xl text-sm font-bold focus:ring-2 focus:ring-emerald-600 outline-none transition-all" 
+                onChange={e => setFormData({...formData, title: e.target.value})} 
               />
             </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">
+                  <DollarSign size={14} className="text-emerald-600" /> Price (USD / Mo)
+                </label>
+                <input 
+                  type="number" 
+                  value={formData.price} 
+                  required 
+                  className="w-full bg-gray-50 border border-gray-100 p-4 rounded-2xl text-sm font-bold focus:ring-2 focus:ring-emerald-600 outline-none transition-all" 
+                  onChange={e => setFormData({...formData, price: e.target.value})} 
+                />
+              </div>
+              <div>
+                <label className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">
+                  <MapPin size={14} className="text-emerald-600" /> Location
+                </label>
+                <input 
+                  type="text" 
+                  value={formData.location} 
+                  required 
+                  className="w-full bg-gray-50 border border-gray-100 p-4 rounded-2xl text-sm font-bold focus:ring-2 focus:ring-emerald-600 outline-none transition-all" 
+                  onChange={e => setFormData({...formData, location: e.target.value})} 
+                />
+              </div>
+            </div>
+
             <div>
-              <label className="block text-xs font-bold uppercase text-gray-400 mb-2">Location</label>
-              <input 
-                className="w-full border-gray-200 bg-gray-50 border p-4 rounded-2xl focus:ring-2 focus:ring-primary outline-none transition-all" 
-                value={formData.location} 
-                onChange={e => setFormData({...formData, location: e.target.value})} 
+              <label className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">
+                <AlignLeft size={14} className="text-emerald-600" /> Description
+              </label>
+              <textarea 
+                value={formData.description} 
+                required 
+                className="w-full bg-gray-50 border border-gray-100 p-4 rounded-2xl text-sm font-bold h-40 focus:ring-2 focus:ring-emerald-600 outline-none transition-all resize-none" 
+                onChange={e => setFormData({...formData, description: e.target.value})} 
               />
             </div>
           </div>
 
-          <button type="submit" className="w-full bg-primary text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-3 hover:bg-teal-800 transition-all shadow-lg hover:shadow-teal-100">
-            <Save size={22} /> Update Property Info
+          <button 
+            type="submit" 
+            disabled={submitting}
+            className="w-full bg-emerald-600 text-white font-black py-5 rounded-[1.5rem] flex items-center justify-center gap-2 shadow-xl shadow-emerald-100 hover:opacity-90 transition disabled:opacity-50"
+          >
+            {submitting ? 'Saving Changes...' : 'Update Property'} <Save size={20} />
           </button>
         </form>
       </div>

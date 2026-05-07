@@ -75,8 +75,15 @@ export const getConversations = async (req: AuthRequest, res: Response) => {
             content: msg.content,
             createdAt: msg.createdAt,
             read: msg.read,
+            senderId: msg.senderId,
           },
+          unreadCount: 0
         });
+      }
+
+      if (msg.receiverId === userId && !msg.read) {
+        const convo = conversationsMap.get(conversationKey);
+        convo.unreadCount += 1;
       }
     });
 
@@ -91,6 +98,20 @@ export const getMessageThread = async (req: AuthRequest, res: Response) => {
     const { listingId, userId: otherUserId } = req.params;
     const currentUserId = req.user?.id;
 
+    // Mark messages as received if current user is the receiver
+    await prisma.message.updateMany({
+      where: {
+        listingId: parseInt(listingId),
+        senderId: parseInt(otherUserId),
+        receiverId: currentUserId,
+        received: false,
+      },
+      data: {
+        received: true,
+        receivedAt: new Date(),
+      },
+    });
+
     const messages = await prisma.message.findMany({
       where: {
         listingId: parseInt(listingId),
@@ -102,7 +123,12 @@ export const getMessageThread = async (req: AuthRequest, res: Response) => {
       orderBy: { createdAt: 'asc' },
     });
 
-    res.json(messages);
+    const otherUser = await prisma.user.findUnique({
+      where: { id: parseInt(otherUserId) },
+      select: { id: true, name: true, role: true }
+    });
+
+    res.json({ messages, otherUser });
   } catch (error: any) {
     res.status(500).json({ error: error.message });
   }
@@ -124,6 +150,54 @@ export const markAsRead = async (req: AuthRequest, res: Response) => {
     });
 
     res.json(updatedMessage);
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const markThreadAsRead = async (req: AuthRequest, res: Response) => {
+  try {
+    const { listingId, userId: otherUserId } = req.body;
+    const currentUserId = req.user?.id;
+
+    if (!listingId || !otherUserId) {
+      return res.status(400).json({ error: 'listingId and userId are required' });
+    }
+
+    await prisma.message.updateMany({
+      where: {
+        listingId: parseInt(listingId),
+        senderId: parseInt(otherUserId),
+        receiverId: currentUserId,
+        OR: [
+          { read: false },
+          { received: false }
+        ]
+      },
+      data: { 
+        read: true,
+        readAt: new Date(),
+        received: true,
+        receivedAt: new Date(),
+      },
+    });
+
+    res.json({ message: 'Thread marked as read' });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const getUnreadCount = async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user?.id;
+    const count = await prisma.message.count({
+      where: {
+        receiverId: userId,
+        read: false,
+      },
+    });
+    res.json({ count });
   } catch (error: any) {
     res.status(500).json({ error: error.message });
   }

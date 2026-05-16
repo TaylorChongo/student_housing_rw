@@ -3,8 +3,8 @@ import { Home, Mail, Phone, Instagram, Twitter, Facebook, ArrowUpRight } from 'l
 
 const Footer = () => {
   return (
-    <footer id="site-footer" className="bg-slate-900 text-white pt-24 pb-12 px-6 border-t border-white/5">
-      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-16 mb-20">
+    <footer id="site-footer" className="bg-slate-900 text-white pt-16 md:pt-24 pb-12 px-4 sm:px-6 border-t border-white/5">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10 md:gap-16 mb-14 md:mb-20">
         <div className="md:col-span-1">
           <Link to="/" className="text-2xl font-black text-white flex items-center gap-2 tracking-tight mb-6">
             <div className="bg-emerald-600 p-1.5 rounded-xl text-white">
@@ -32,7 +32,7 @@ const Footer = () => {
           <h4 className="text-xs font-black uppercase tracking-[0.2em] text-emerald-500 mb-8">Navigation</h4>
           <ul className="space-y-4">
             <li><Link to="/" className="text-gray-400 hover:text-white transition-colors font-bold">Home</Link></li>
-            <li><Link to="/login" className="text-gray-400 hover:text-white transition-colors font-bold">Landlord Portal</Link></li>
+            <li><button type="button" className="text-gray-400 hover:text-white transition-colors font-bold">Landlord Portal</button></li>
             <li><Link to="/community" className="text-gray-400 hover:text-white transition-colors font-bold">Join the Community</Link></li>
             <li><Link to="/saved" className="text-gray-400 hover:text-white transition-colors font-bold">Saved Places</Link></li>
           </ul>

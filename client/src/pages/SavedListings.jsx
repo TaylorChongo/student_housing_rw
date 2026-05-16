@@ -32,7 +32,7 @@ const SavedListings = () => {
   if (loading) return <div className="text-center py-20 animate-pulse font-black text-slate-950">LOADING SAVED PLACES...</div>;
 
   return (
-    <div className="max-w-7xl mx-auto px-6 py-10 pb-32">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-10 pb-32">
       <Link 
         to="/listings" 
         className="inline-flex items-center gap-2 text-gray-400 hover:text-emerald-600 mb-8 transition font-black text-xs uppercase tracking-widest group"
@@ -41,10 +41,10 @@ const SavedListings = () => {
         Back to discovery
       </Link>
       
-      <h2 className="text-3xl font-black text-slate-950 mb-10 italic">Saved Collection</h2>
+      <h2 className="text-3xl sm:text-4xl font-black text-slate-950 mb-8 sm:mb-10 italic">Saved Collection</h2>
       
       {favorites.length === 0 ? (
-        <div className="text-center py-32 bg-white rounded-[2.5rem] border border-dashed border-gray-200">
+        <div className="text-center py-20 sm:py-32 px-4 bg-white rounded-[2rem] sm:rounded-[2.5rem] border border-dashed border-gray-200">
           <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center text-gray-300 mx-auto mb-4">
             <Bookmark size={32} />
           </div>
@@ -52,14 +52,14 @@ const SavedListings = () => {
           <Link to="/listings" className="text-emerald-600 font-black mt-2 underline italic inline-block">Explore homes</Link>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
           {favorites.map(item => (
             <Link 
               key={item.id} 
               to={`/listings/${item.listing.id}`} 
               className="card group"
             >
-              <div className="relative h-60">
+              <div className="relative aspect-[4/3] sm:h-60">
                 <img 
                   src={item.listing.images && item.listing.images[0] ? item.listing.images[0] : 'https://via.placeholder.com/400x300'} 
                   className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-700" 
@@ -83,14 +83,14 @@ const SavedListings = () => {
                   </div>
                 </div>
               </div>
-              <div className="p-6">
+              <div className="p-5 sm:p-6">
                 <h3 className="text-xl font-bold text-slate-950 group-hover:text-emerald-600 transition-colors leading-tight line-clamp-1">{item.listing.title}</h3>
                 <div className="flex items-center gap-1 text-gray-400 mt-2 text-sm font-medium">
                   <MapPin size={14} />
                   <span>{item.listing.location}</span>
                 </div>
                 
-                <div className="mt-6 pt-6 border-t border-gray-50 flex items-center justify-between">
+                <div className="mt-6 pt-6 border-t border-gray-50 flex flex-wrap items-center justify-between gap-3">
                   <div className="flex items-center gap-1 text-emerald-600 font-black text-[10px] uppercase tracking-widest">
                     <Zap size={14} fill="currentColor" />
                     <span>8.5/10 Ready</span>

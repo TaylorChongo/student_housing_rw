@@ -21,6 +21,8 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    return;
+
     try {
       await register(formData);
       window.location.href = '/listings';
@@ -30,18 +32,18 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-full flex flex-col justify-center px-6 py-12">
+    <div className="min-h-full flex flex-col justify-center px-4 sm:px-6 py-8 sm:py-12">
       <div className="max-w-md w-full mx-auto space-y-8">
         <div className="text-center">
           <Link to="/" className="inline-flex items-center gap-2 text-gray-400 hover:text-emerald-600 mb-8 transition font-black text-xs uppercase tracking-widest group">
             <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
             Back to Home
           </Link>
-          <h2 className="text-4xl font-black text-slate-950 italic">Join the Community</h2>
+          <h2 className="text-3xl sm:text-4xl font-black text-slate-950 italic">Join the Community</h2>
           <p className="mt-2 text-gray-500 font-medium">Simple, fast, and secure student housing.</p>
         </div>
 
-        <div className="bg-white p-10 rounded-[2.5rem] shadow-xl shadow-gray-100 border border-gray-100">
+        <div className="bg-white p-6 sm:p-10 rounded-[2rem] sm:rounded-[2.5rem] shadow-xl shadow-gray-100 border border-gray-100">
           {error && <div className="bg-red-50 text-red-600 p-4 mb-6 rounded-2xl text-xs font-bold border border-red-100">{error}</div>}
           
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -106,7 +108,7 @@ const Register = () => {
           </form>
 
           <p className="mt-8 text-center text-sm font-medium text-gray-400">
-            Already have an account? <Link to="/login" className="text-emerald-600 font-black hover:underline">Sign In</Link>
+            Already have an account? <button type="button" className="text-emerald-600 font-black hover:underline">Sign In</button>
           </p>
         </div>
       </div>

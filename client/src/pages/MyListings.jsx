@@ -46,25 +46,25 @@ const MyListings = () => {
   );
 
   return (
-    <div className="max-w-6xl mx-auto px-6 py-12 pb-32">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12 pb-32">
       <div className="flex flex-col md:flex-row justify-between items-center gap-6 mb-12 text-center md:text-left">
         <div>
           <div className="inline-flex items-center gap-2 bg-emerald-50 text-emerald-600 px-4 py-2 rounded-full text-xs font-black uppercase tracking-widest mb-4">
             <Sparkles size={14} /> Landlord Dashboard
           </div>
-          <h2 className="text-4xl font-black text-slate-950 italic">My Properties</h2>
+          <h2 className="text-3xl sm:text-4xl font-black text-slate-950 italic">My Properties</h2>
           <p className="text-gray-500 mt-2 font-medium">Manage your active listings and housing offers.</p>
         </div>
         <Link 
           to="/create-listing" 
-          className="bg-emerald-600 text-white px-8 py-4 rounded-[1.5rem] flex items-center gap-2 font-black shadow-xl shadow-emerald-100 hover:opacity-90 transition active:scale-95"
+          className="w-full sm:w-auto bg-emerald-600 text-white px-8 py-4 rounded-[1.5rem] flex items-center justify-center gap-2 font-black shadow-xl shadow-emerald-100 hover:opacity-90 transition active:scale-95"
         >
           <Plus size={20} /> Post New Property
         </Link>
       </div>
 
       {listings.length === 0 ? (
-        <div className="text-center py-32 bg-white rounded-[3rem] border-2 border-dashed border-gray-100 flex flex-col items-center justify-center">
+        <div className="text-center py-20 sm:py-32 px-4 bg-white rounded-[2rem] sm:rounded-[3rem] border-2 border-dashed border-gray-100 flex flex-col items-center justify-center">
           <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center text-gray-200 mb-6">
             <Home size={40} />
           </div>
@@ -74,9 +74,9 @@ const MyListings = () => {
       ) : (
         <div className="grid gap-6">
           {listings.map(l => (
-            <div key={l.id} className="bg-white p-6 rounded-[2.5rem] border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col md:flex-row items-center justify-between group gap-6">
+            <div key={l.id} className="bg-white p-4 sm:p-6 rounded-[2rem] sm:rounded-[2.5rem] border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col md:flex-row items-center justify-between group gap-6">
               <div className="flex flex-col md:flex-row items-center gap-8 w-full">
-                <div className="w-32 h-32 shrink-0 rounded-[2rem] overflow-hidden shadow-md">
+                <div className="w-full md:w-32 h-48 md:h-32 shrink-0 rounded-[1.5rem] md:rounded-[2rem] overflow-hidden shadow-md">
                   <img 
                     src={l.images[0] || 'https://via.placeholder.com/100'} 
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 

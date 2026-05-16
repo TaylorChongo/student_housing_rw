@@ -42,8 +42,8 @@ const EditListing = () => {
   );
 
   return (
-    <div className="max-w-4xl mx-auto px-6 py-12 pb-32">
-      <div className="mb-10 flex items-center justify-between">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-12 pb-32">
+      <div className="mb-8 sm:mb-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <button 
           onClick={() => navigate('/my-listings')} 
           className="flex items-center gap-2 text-slate-500 hover:text-slate-950 transition font-black uppercase text-[10px] tracking-widest"
@@ -55,13 +55,13 @@ const EditListing = () => {
         </div>
       </div>
 
-      <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-2xl shadow-gray-100 overflow-hidden">
-        <div className="p-10 border-b border-gray-50">
-          <h2 className="text-3xl font-black text-slate-950 italic">Update {formData.title}</h2>
+      <div className="bg-white rounded-[2rem] sm:rounded-[2.5rem] border border-gray-100 shadow-2xl shadow-gray-100 overflow-hidden">
+        <div className="p-6 sm:p-10 border-b border-gray-50">
+          <h2 className="text-2xl sm:text-3xl font-black text-slate-950 italic">Update {formData.title}</h2>
           <p className="text-gray-500 mt-2 font-medium">Keep your property information up to date for better results.</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-10 space-y-6">
+        <form onSubmit={handleSubmit} className="p-6 sm:p-10 space-y-6">
           <div className="space-y-4">
             <div>
               <label className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">
@@ -76,7 +76,7 @@ const EditListing = () => {
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">
                   <DollarSign size={14} className="text-emerald-600" /> Price (USD / Mo)

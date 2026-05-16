@@ -104,13 +104,13 @@ const Listings = () => {
   const activeFilterCount = Object.values(filters).filter(Boolean).length;
 
   return (
-    <div className="max-w-7xl mx-auto px-6 py-10 pb-32">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-10 pb-32">
       <div className="mb-4">
         <BackButton />
       </div>
       {/* Search Header */}
       <div className="mb-10">
-        <h2 className="text-3xl font-black text-slate-950 mb-6 italic">Discovery</h2>
+        <h2 className="text-3xl sm:text-4xl font-black text-slate-950 mb-6 italic">Discovery</h2>
         <div className="flex gap-3">
           <form onSubmit={handleSearchSubmit} className="flex-1 relative group">
             <input 
@@ -138,7 +138,7 @@ const Listings = () => {
         </div>
 
         {showFilters && (
-          <div className="mt-4 bg-white border border-gray-100 rounded-[2rem] p-5 shadow-sm">
+          <div className="mt-4 bg-white border border-gray-100 rounded-[1.5rem] sm:rounded-[2rem] p-4 sm:p-5 shadow-sm">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div>
                 <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Location</label>
@@ -207,21 +207,21 @@ const Listings = () => {
       </div>
 
       {loading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
           {[1, 2, 3, 4, 5, 6].map(i => (
             <div key={i} className="h-80 bg-gray-100 animate-pulse rounded-[2rem]"></div>
           ))}
         </div>
       ) : listings.length === 0 ? (
-        <div className="text-center py-20 bg-white rounded-[2rem] border border-dashed border-gray-200">
+        <div className="text-center py-16 sm:py-20 px-4 bg-white rounded-[2rem] border border-dashed border-gray-200">
           <p className="text-gray-400 font-bold">No properties found matching your search.</p>
           <button onClick={handleClearFilters} className="text-emerald-600 font-black mt-2 underline">Clear Filters</button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
           {listings.map(item => (
             <Link key={item.id} to={`/listings/${item.id}`} className="card group">
-              <div className="relative h-60">
+              <div className="relative aspect-[4/3] sm:h-60">
                 <img 
                   src={item.images && item.images[0] ? item.images[0] : 'https://via.placeholder.com/400x300'} 
                   className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-700" 
@@ -247,14 +247,14 @@ const Listings = () => {
                   </div>
                 </div>
               </div>
-              <div className="p-6">
+              <div className="p-5 sm:p-6">
                 <h3 className="text-xl font-bold text-slate-950 group-hover:text-emerald-600 transition-colors leading-tight line-clamp-1">{item.title}</h3>
                 <div className="flex items-center gap-1 text-gray-400 mt-2 text-sm font-medium">
                   <MapPin size={14} />
                   <span>{item.location}</span>
                 </div>
                 
-                <div className="mt-6 pt-6 border-t border-gray-50 flex items-center justify-between">
+                <div className="mt-6 pt-6 border-t border-gray-50 flex flex-wrap items-center justify-between gap-3">
                   <div className="flex items-center gap-1 text-emerald-600 font-black text-[10px] uppercase tracking-widest">
                     <Zap size={14} fill="currentColor" />
                     <span>8.5/10 Ready</span>

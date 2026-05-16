@@ -1,9 +1,12 @@
-import { Router } from 'express';
-import { register, login } from '../controllers/authController';
+import { Request, Response, Router } from 'express';
 
 const router = Router();
 
-router.post('/register', register);
-router.post('/login', login);
+const authTemporarilyDisabled = (_req: Request, res: Response) => {
+  res.status(503).json({ error: 'Authentication is temporarily disabled' });
+};
+
+router.post('/register', authTemporarilyDisabled);
+router.post('/login', authTemporarilyDisabled);
 
 export default router;

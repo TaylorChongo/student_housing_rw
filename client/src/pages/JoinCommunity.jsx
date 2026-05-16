@@ -28,7 +28,7 @@ const JoinCommunity = () => {
   return (
     <div className="pb-24">
       {/* Visionary Hero */}
-      <section className="relative min-h-[64vh] flex items-center justify-center px-6 overflow-hidden">
+      <section className="relative min-h-[64vh] flex items-center justify-center px-4 sm:px-6 py-16 overflow-hidden">
         <div className="absolute inset-0 z-0">
           <img 
             src={heroBg} 
@@ -42,7 +42,7 @@ const JoinCommunity = () => {
           <div className="inline-flex items-center gap-2 bg-emerald-500 text-white px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-[0.25em] mb-8 shadow-2xl shadow-emerald-500/20">
             <Rocket size={14} /> The 2030 Vision
           </div>
-          <h1 className="text-4xl md:text-6xl font-black text-white mb-6 leading-[1.08] tracking-tighter italic uppercase">
+          <h1 className="text-3xl sm:text-4xl md:text-6xl font-black text-white mb-6 leading-[1.08] tracking-tighter italic uppercase">
             Building the <br />
             <span className="text-emerald-400 not-italic">future of campus.</span>
           </h1>
@@ -53,25 +53,25 @@ const JoinCommunity = () => {
       </section>
 
       {/* The Master Plan */}
-      <section className="py-24 px-6 max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+      <section className="py-16 md:py-24 px-4 sm:px-6 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
           <div className="relative">
-            <div className="aspect-square rounded-[4rem] overflow-hidden shadow-2xl border-8 border-white group">
+            <div className="aspect-square rounded-[2rem] sm:rounded-[4rem] overflow-hidden shadow-2xl border-4 sm:border-8 border-white group">
               <img src={communityProjectImage} alt="Student housing project" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" />
               <div className="absolute inset-0 bg-emerald-600/20 mix-blend-multiply" />
             </div>
             {/* Overlay Stat */}
-            <div className="absolute -bottom-10 -right-10 bg-white p-12 rounded-[3rem] shadow-2xl border border-emerald-50">
-               <p className="text-6xl font-black text-emerald-600 mb-2 italic">12</p>
+            <div className="absolute -bottom-6 -right-2 sm:-bottom-10 sm:-right-10 bg-white p-6 sm:p-12 rounded-[2rem] sm:rounded-[3rem] shadow-2xl border border-emerald-50">
+               <p className="text-4xl sm:text-6xl font-black text-emerald-600 mb-2 italic">12</p>
                <p className="text-xs font-black uppercase tracking-widest text-slate-400">Planned Sites</p>
             </div>
           </div>
 
           <div className="space-y-8">
-            <h2 className="text-4xl md:text-5xl font-black text-slate-950 italic uppercase tracking-tighter leading-tight">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-950 italic uppercase tracking-tighter leading-tight">
               The SHRW <br/>Apartment Project
             </h2>
-            <p className="text-gray-500 text-lg font-medium leading-relaxed">
+            <p className="text-gray-500 text-base sm:text-lg font-medium leading-relaxed">
               Finding a house is step one. Owning the ecosystem is the goal. We're designing living spaces that prioritize study, community, and safety—eliminating the stress of housing so students can focus on what matters: their education.
             </p>
             
@@ -97,24 +97,24 @@ const JoinCommunity = () => {
       </section>
 
       {/* Donation Tiers */}
-      <section className="bg-slate-950 py-32 px-6">
+      <section className="bg-slate-950 py-20 md:py-32 px-4 sm:px-6">
         <div className="max-w-7xl mx-auto text-center mb-20">
           <div className="inline-flex items-center gap-2 text-emerald-500 text-[10px] font-black uppercase tracking-widest mb-6">
              <Heart size={14} fill="currentColor" /> Support the Vision
           </div>
-          <h2 className="text-4xl md:text-6xl font-black text-white italic uppercase tracking-tighter mb-6">Invest in the Next Generation</h2>
-          <p className="text-slate-400 font-medium text-lg max-w-2xl mx-auto leading-relaxed">
+          <h2 className="text-3xl sm:text-4xl md:text-6xl font-black text-white italic uppercase tracking-tighter mb-6">Invest in the Next Generation</h2>
+          <p className="text-slate-400 font-medium text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
             Your contributions directly fund land acquisition and architectural development for our upcoming student complexes.
           </p>
         </div>
 
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
           {donationTiers.map((tier, idx) => (
-            <div key={idx} className="bg-white/5 border border-white/10 p-12 rounded-[3.5rem] flex flex-col items-center text-center hover:bg-white/[0.08] transition-all group relative overflow-hidden">
+            <div key={idx} className="bg-white/5 border border-white/10 p-6 sm:p-10 xl:p-12 rounded-[2rem] md:rounded-[3.5rem] flex flex-col items-center text-center hover:bg-white/[0.08] transition-all group relative overflow-hidden">
               {idx === 2 && <div className="absolute top-0 right-0 bg-emerald-600 text-white px-6 py-2 rounded-bl-3xl font-black text-[10px] uppercase tracking-widest">Most Impact</div>}
               <h3 className="text-2xl font-black text-white mb-2 italic uppercase">{tier.name}</h3>
               <div className="flex items-end gap-1 mb-8">
-                <span className="text-5xl font-black text-emerald-400 italic">${tier.amount}</span>
+                <span className="text-4xl sm:text-5xl font-black text-emerald-400 italic">${tier.amount}</span>
                 <span className="text-slate-500 font-black text-sm mb-2 uppercase tracking-widest">/ one-time</span>
               </div>
               <p className="text-slate-400 font-medium text-sm leading-relaxed mb-10">
@@ -136,8 +136,8 @@ const JoinCommunity = () => {
       </section>
 
       {/* Transparency Note */}
-      <section className="py-24 px-6 text-center">
-        <div className="max-w-3xl mx-auto bg-emerald-50 p-12 rounded-[4rem] border border-emerald-100 shadow-xl shadow-emerald-900/5">
+      <section className="py-16 md:py-24 px-4 sm:px-6 text-center">
+        <div className="max-w-3xl mx-auto bg-emerald-50 p-6 sm:p-12 rounded-[2rem] sm:rounded-[4rem] border border-emerald-100 shadow-xl shadow-emerald-900/5">
           <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-[1.5rem] flex items-center justify-center mb-8 mx-auto">
              <Users size={32} />
           </div>

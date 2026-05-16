@@ -22,19 +22,19 @@ const CreateListing = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-6 py-12 pb-32">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-12 pb-32">
       <div className="mb-10 text-center">
         <div className="inline-flex items-center gap-2 bg-emerald-50 text-emerald-600 px-4 py-2 rounded-full text-xs font-black uppercase tracking-widest mb-4">
           <PlusCircle size={14} /> Property Management
         </div>
-        <h2 className="text-4xl font-black text-slate-950 italic">List Your Property</h2>
+        <h2 className="text-3xl sm:text-4xl font-black text-slate-950 italic">List Your Property</h2>
         <p className="text-gray-500 mt-2 font-medium">Reach thousands of students searching for their next home.</p>
       </div>
 
-      <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-2xl shadow-gray-100 overflow-hidden">
+      <div className="bg-white rounded-[2rem] sm:rounded-[2.5rem] border border-gray-100 shadow-2xl shadow-gray-100 overflow-hidden">
         <div className="grid md:grid-cols-5 h-full">
           {/* Sidebar Info */}
-          <div className="md:col-span-2 bg-slate-950 p-10 text-white flex flex-col justify-between">
+          <div className="md:col-span-2 bg-slate-950 p-6 sm:p-10 text-white flex flex-col justify-between">
             <div>
               <h3 className="text-2xl font-black mb-6 italic uppercase tracking-tight">Quick Tips</h3>
               <ul className="space-y-6">
@@ -59,7 +59,7 @@ const CreateListing = () => {
           </div>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="md:col-span-3 p-10 space-y-6">
+          <form onSubmit={handleSubmit} className="md:col-span-3 p-6 sm:p-10 space-y-6">
             <div className="space-y-4">
               <div>
                 <label className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">
@@ -74,7 +74,7 @@ const CreateListing = () => {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">
                     <DollarSign size={14} className="text-emerald-600" /> Price (USD / Mo)

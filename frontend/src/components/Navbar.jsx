@@ -30,9 +30,9 @@ const Navbar = () => {
 
   const navLinks = [
     { name: 'Home', path: '/' },
+    { name: 'Discovery', path: '/listings' },
     { name: 'Join Community', path: '/community' },
     { name: 'Contact', path: '/contact' },
-    { name: 'About Us', path: '/about' },
   ];
 
   const userLinks = user ? [

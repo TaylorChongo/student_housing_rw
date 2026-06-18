@@ -47,20 +47,27 @@ export const getAllListings = async (req: Request, res: Response) => {
     const take = Number(limit);
 
     const where: any = {};
-    if (search) {
+    if (search && String(search).trim()) {
       const searchText = String(search).trim();
-      if (searchText) {
-        where.OR = [
-          { title: { contains: searchText, mode: 'insensitive' } },
-          { description: { contains: searchText, mode: 'insensitive' } },
-          { location: { contains: searchText, mode: 'insensitive' } },
-        ];
-      }
+      where.OR = [
+        { title: { contains: searchText, mode: 'insensitive' } },
+        { description: { contains: searchText, mode: 'insensitive' } },
+        { location: { contains: searchText, mode: 'insensitive' } },
+      ];
     }
-    if (minPrice) where.price = { ...where.price, gte: parseFloat(minPrice as string) };
-    if (maxPrice) where.price = { ...where.price, lte: parseFloat(maxPrice as string) };
-    if (location) where.location = { contains: location as string, mode: 'insensitive' };
-    if (availability !== undefined) where.availability = availability === 'true';
+    
+    if (minPrice && !isNaN(parseFloat(minPrice as string))) {
+      where.price = { ...where.price, gte: parseFloat(minPrice as string) };
+    }
+    if (maxPrice && !isNaN(parseFloat(maxPrice as string))) {
+      where.price = { ...where.price, lte: parseFloat(maxPrice as string) };
+    }
+    if (location && String(location).trim()) {
+      where.location = { contains: String(location).trim(), mode: 'insensitive' };
+    }
+    if (availability === 'true' || availability === 'false') {
+      where.availability = availability === 'true';
+    }
 
     const listings = await prisma.listing.findMany({
       where,

@@ -2,6 +2,7 @@ import { Router } from 'express';
 import {
   createListing,
   getAllListings,
+  getMyListings,
   getListingById,
   updateListing,
   deleteListing,
@@ -11,6 +12,7 @@ import { protect, authorize } from '../middleware/authMiddleware';
 const router = Router();
 
 router.get('/', getAllListings);
+router.get('/my', protect, authorize('landlord'), getMyListings);
 router.get('/:id', getListingById);
 
 router.post('/', protect, authorize('landlord'), createListing);

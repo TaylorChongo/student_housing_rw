@@ -16,9 +16,8 @@ const MyListings = () => {
       return;
     }
     try {
-      const { data } = await api.get('/listings'); 
-      // Filter for current landlord's properties
-      setListings(data.listings.filter(l => l.landlordId === user.id));
+      const { data } = await api.get('/listings/my'); 
+      setListings(data.listings);
     } catch (err) {
       console.error(err);
     } finally {

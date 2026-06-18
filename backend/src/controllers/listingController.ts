@@ -87,6 +87,24 @@ export const getAllListings = async (req: Request, res: Response) => {
   }
 };
 
+export const getMyListings = async (req: AuthRequest, res: Response) => {
+  try {
+    const landlordId = req.user?.id;
+    const listings = await prisma.listing.findMany({
+      where: { landlordId },
+      orderBy: { createdAt: 'desc' },
+      include: {
+        landlord: {
+          select: { name: true, email: true },
+        },
+      },
+    });
+    res.json({ listings });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 export const getListingById = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;

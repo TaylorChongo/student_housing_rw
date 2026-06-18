@@ -136,10 +136,10 @@ const Navbar = () => {
                   </div>
                 ) : (
                   <div className="hidden md:flex items-center gap-2 pl-3 border-l border-gray-100 ml-2">
-                    <button type="button" className="text-slate-950 font-bold text-sm px-4 hover:text-emerald-600 transition-colors">Login</button>
-                    <button type="button" className="bg-slate-950 text-white px-6 py-2.5 rounded-xl font-bold text-sm shadow-xl shadow-slate-200 hover:bg-emerald-600 transition-all hover:scale-105 active:scale-95">
+                    <Link to="/login" className="text-slate-950 font-bold text-sm px-4 hover:text-emerald-600 transition-colors">Login</Link>
+                    <Link to="/register" className="bg-slate-950 text-white px-6 py-2.5 rounded-xl font-bold text-sm shadow-xl shadow-slate-200 hover:bg-emerald-600 transition-all hover:scale-105 active:scale-95">
                       Create an account
-                    </button>
+                    </Link>
                   </div>
                 )}
 

@@ -1,9 +1,17 @@
-node_modules
+# Root ignore
+node_modules/
 .env
-dist
-build
+dist/
+build/
 *.log
 .DS_Store
-.vscode
-client/node_modules
-client/dist
+.vscode/
+
+# Backend specific
+backend/node_modules/
+backend/.env
+backend/dist/
+
+# Frontend specific
+frontend/node_modules/
+frontend/dist/
